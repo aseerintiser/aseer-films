@@ -2,8 +2,8 @@
   "name": "aseer-films",
   "version": "1.0.0",
   "description": "Cinematic film portfolio of Md Aseer Intiser: travel films, tributes and short stories from Bangladesh and Finland.",
-  "author": "Md Aseer Intiser <aseerniloy@gmail.com>",
-  "homepage": "https://films.aseer.design",
+  "author": "Md Aseer Intiser <md.aseerintiser@gmail.com>",
+  "homepage": "https://aseer-films.vercel.app",
   "repository": {
     "type": "git",
     "url": "https://github.com/aseerintiser/aseer-films.git"

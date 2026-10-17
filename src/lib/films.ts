@@ -216,7 +216,7 @@ export const site = {
   name: 'Md Aseer Intiser',
   description:
     'Travel films, tributes and short stories by Md Aseer Intiser, a Bangladeshi filmmaker based in Tampere, Finland.',
-  email: 'aseerniloy@gmail.com',
+  email: 'md.aseerintiser@gmail.com',
   links: [
     { label: 'Bohrscope on YouTube', href: 'https://www.youtube.com/@bohrscope' },
     { label: 'iAMBOHRED on YouTube', href: 'https://www.youtube.com/@iambohred8588' },

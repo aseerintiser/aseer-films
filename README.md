@@ -4,7 +4,7 @@
 
 The film portfolio of **Md Aseer Intiser**, a Bangladeshi filmmaker and UX designer based in Tampere, Finland. It brings together travel films, tributes and short stories made between 2016 and today, published on YouTube and Facebook.
 
-**Live site:** [films.aseer.design](https://films.aseer.design)
+**Live site:** [aseer-films.vercel.app](https://aseer-films.vercel.app)
 **Design portfolio:** [aseer.design](https://aseer.design)
 **Channel:** [Bohrscope on YouTube](https://www.youtube.com/@bohrscope)
 
@@ -138,4 +138,4 @@ See [LICENSE](LICENSE) for details.
 
 ## Contact
 
-**Md Aseer Intiser** · [aseerniloy@gmail.com](mailto:aseerniloy@gmail.com) · [aseer.design](https://aseer.design) · [LinkedIn](https://www.linkedin.com/in/md-aseer-intiser/)
+**Md Aseer Intiser** · [md.aseerintiser@gmail.com](mailto:md.aseerintiser@gmail.com) · [aseer.design](https://aseer.design) · [LinkedIn](https://www.linkedin.com/in/md-aseer-intiser/)

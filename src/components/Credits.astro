@@ -2,7 +2,6 @@
 import { site, films, totalViews } from '../lib/films';
 
 const watched = `${Math.floor(totalViews / 10000) * 10}K`;
-const thanks = ['Naheen Ibn Akbar', 'MD Ashiqur Rahman', 'Team Interaction with Robots', "SWE'18 and CSE'18 at IUT", 'Everyone who stood in front of the camera'];
 const year = new Date().getFullYear();
 ---
 
@@ -23,11 +22,6 @@ const year = new Date().getFullYear();
       </p>
     </div>
 
-    <p class="role">With thanks to</p>
-    <ul class="names">
-      {thanks.map((n) => <li>{n}</li>)}
-    </ul>
-
     <p class="role" id="contact">Say hello</p>
     <a class="email" href={`mailto:${site.email}`}>{site.email}</a>
     <ul class="links">
@@ -45,7 +39,6 @@ const year = new Date().getFullYear();
       By day I design digital products. See that work at <a href={site.designSite}>aseer.design</a>.
     </p>
 
-    <p class="fin" aria-hidden="true">Fin.</p>
     <p class="copy">© 2015–{year} {site.name}</p>
   </div>
 </section>
@@ -87,7 +80,6 @@ const year = new Date().getFullYear();
     line-height: 1.5;
     font-weight: 340;
   }
-  .names,
   .links {
     margin: 1rem 0 0;
     padding: 0;
@@ -131,16 +123,8 @@ const year = new Date().getFullYear();
     color: var(--dust);
     font-size: 0.9375rem;
   }
-  .fin {
-    margin-top: clamp(6rem, 14vw, 10rem);
-    font-size: clamp(4rem, 2rem + 9vw, 9rem);
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1;
-    letter-spacing: -0.01em;
-  }
   .copy {
-    margin-top: 2.5rem;
+    margin-top: clamp(5rem, 12vw, 8rem);
     color: var(--dust);
     font-size: var(--step--1);
   }
