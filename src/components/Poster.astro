@@ -1,0 +1,55 @@
+---
+import type { Film } from '../lib/films';
+
+interface Props {
+  film: Film;
+  size?: 'large' | 'small';
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  alt?: string;
+  fetchpriority?: 'high' | 'low' | 'auto';
+  /** Leave src empty until a script asks for it */
+  deferred?: boolean;
+}
+
+const { film, size = 'large', class: cls = '', loading = 'lazy', alt = '', fetchpriority = 'auto', deferred = false } = Astro.props;
+const src = size === 'large' ? film.posterLarge : film.posterSmall;
+---
+
+{
+  src ? (
+    <img
+      class={cls}
+      src={deferred ? undefined : src}
+      data-src={deferred ? src : undefined}
+      data-fallback={film.posterFallback}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      fetchpriority={fetchpriority}
+      width={size === 'large' ? 1280 : 320}
+      height={size === 'large' ? 720 : 180}
+    />
+  ) : (
+    <div class:list={[cls, 'title-card']} style={`--card:${film.accent}`} role={alt ? 'img' : undefined} aria-label={alt || undefined}>
+      <span lang={film.language ?? undefined}>{film.title}</span>
+    </div>
+  )
+}
+
+<style is:global>
+  .title-card {
+    display: grid;
+    place-items: center;
+    padding: 8%;
+    text-align: center;
+    background:
+      radial-gradient(120% 90% at 50% 110%, color-mix(in oklab, var(--card) 45%, transparent), transparent 70%),
+      var(--black);
+    font-size: clamp(1rem, 2.4vw, 2.6rem);
+    line-height: 1.15;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import { site } from '../lib/films';
+const isHome = Astro.url.pathname === '/';
+const base = isHome ? '' : '/';
+---
+
+<header class="bar">
+  <a class="mark" href="/" aria-label={`${site.name}, home`}>
+    <span class="dot" aria-hidden="true"></span>{site.name}
+  </a>
+  <nav aria-label="Main">
+    <a href={`${base}#selected`}>Films</a>
+    <a href={`${base}#films`}>Timeline</a>
+    <a href={`${base}#credits`}>About</a>
+  </nav>
+</header>
+
+<style>
+  .bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-inline: var(--gutter);
+    background: var(--black);
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+  }
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--safelight);
+    box-shadow: 0 0 10px var(--safelight);
+    animation: rec 2s steps(1) infinite;
+  }
+  @keyframes rec {
+    50% { opacity: 0.25; }
+  }
+  nav {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.25rem);
+  }
+  nav a {
+    color: var(--dust);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover {
+    color: var(--light);
+  }
+  @media (max-width: 420px) {
+    .mark {
+      font-size: 0.875rem;
+    }
+    nav {
+      gap: 0.9rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>

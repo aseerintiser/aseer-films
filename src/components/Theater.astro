@@ -1,0 +1,381 @@
+---
+---
+
+<dialog class="theater" aria-labelledby="th-title">
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="th-inner">
+    <div class="th-top">
+      <p class="th-kind" data-th="kind"></p>
+      <button class="th-close" type="button" data-th-close>
+        Close
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.4"></path></svg>
+      </button>
+    </div>
+
+    <div class="th-screen" data-th="screen"></div>
+
+    <div class="th-info">
+      <div class="th-main">
+        <h2 id="th-title" data-th="title"></h2>
+        <p class="th-sub" data-th="sub"></p>
+        <p class="th-logline" data-th="logline"></p>
+        <p class="th-notes" data-th="notes"></p>
+      </div>
+      <div class="th-side">
+        <dl class="th-facts" data-th="facts"></dl>
+        <p class="th-links" data-th="links"></p>
+      </div>
+    </div>
+
+    <nav class="th-nav" aria-label="More films">
+      <button type="button" data-th-step="-1"><span class="dir">Newer</span><span data-th="prev"></span></button>
+      <button type="button" data-th-step="1"><span class="dir">Older</span><span data-th="next"></span></button>
+    </nav>
+  </div>
+</dialog>
+
+<style is:global>
+  .theater {
+    --accent: var(--tungsten);
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--black);
+    color: var(--light);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .theater::backdrop {
+    background: var(--black);
+  }
+  .theater[open] {
+    animation: th-in 0.5s var(--ease-film);
+  }
+  @keyframes th-in {
+    from {
+      clip-path: inset(50% 0 50% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  html:has(.theater[open]) {
+    overflow: hidden;
+  }
+  .ambient {
+    position: fixed;
+    inset: -10%;
+    background: var(--th-poster, none) center / cover no-repeat;
+    filter: blur(90px) saturate(1.3);
+    opacity: 0.32;
+    pointer-events: none;
+    transform: translateZ(0);
+  }
+  .th-inner {
+    position: relative;
+    width: min(100% - 2 * var(--gutter), (100svh - 8.5rem) * 16 / 9, 1600px);
+    margin: 0 auto;
+    padding-bottom: 4rem;
+  }
+  .th-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    height: 4.25rem;
+  }
+  .th-kind {
+    color: var(--dust);
+    font-size: 0.9375rem;
+  }
+  .th-close {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0;
+    font-size: 0.9375rem;
+  }
+  .th-close svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  .th-screen {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #050505;
+    box-shadow: 0 30px 120px -20px color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+  .th-screen iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .th-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(14rem, 1fr);
+    gap: 2rem clamp(2rem, 6vw, 6rem);
+    margin-top: clamp(1.75rem, 4vw, 3rem);
+  }
+  #th-title {
+    font-size: var(--step-4);
+    font-weight: 440;
+  }
+  .th-sub {
+    margin-top: 0.4rem;
+    color: var(--dust);
+  }
+  .th-logline {
+    margin-top: 1.25rem;
+    font-size: var(--step-1);
+    line-height: 1.4;
+    font-weight: 340;
+    max-width: 40ch;
+  }
+  .th-notes {
+    margin-top: 1rem;
+    max-width: 60ch;
+    color: rgb(237 232 222 / 0.78);
+    font-weight: 340;
+  }
+  .th-facts {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0.3rem 0 0;
+  }
+  .th-facts dt {
+    font-size: var(--step--1);
+    color: var(--dust);
+  }
+  .th-facts dd {
+    margin: 0;
+  }
+  .th-facts .views {
+    color: var(--accent);
+  }
+  .th-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.9375rem;
+  }
+  .th-links a {
+    color: var(--dust);
+  }
+  .th-links a:hover {
+    color: var(--light);
+  }
+  .th-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    margin-top: clamp(3rem, 7vw, 5rem);
+    border-top: 1px solid var(--rule);
+  }
+  .th-nav button {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.4rem 0;
+    text-align: left;
+    font-size: var(--step-1);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .th-nav button:last-child {
+    text-align: right;
+  }
+  .th-nav button:hover [data-th] {
+    color: var(--accent);
+  }
+  .th-nav button[hidden] {
+    display: grid;
+    visibility: hidden;
+  }
+  .th-nav .dir {
+    font-size: var(--step--1);
+    color: var(--dust);
+  }
+  @media (max-width: 760px) {
+    .th-inner {
+      width: calc(100% - 2 * var(--gutter));
+    }
+    .th-info {
+      grid-template-columns: 1fr;
+    }
+    .th-nav button {
+      font-size: var(--step-0);
+    }
+  }
+</style>
+
+<script>
+  import { getFilms, findFilm } from '../scripts/data';
+  import type { ClientFilm } from '../lib/films';
+
+  const dialog = document.querySelector<HTMLDialogElement>('.theater');
+  if (dialog) {
+    const films = getFilms();
+    const el = (name: string) => dialog.querySelector<HTMLElement>(`[data-th="${name}"]`)!;
+    const screen = el('screen');
+    let current: ClientFilm | null = null;
+    let returnFocus: HTMLElement | null = null;
+    let pushed = false;
+    const homePath = location.pathname;
+
+    const setText = (name: string, text: string | null, lang?: string | null) => {
+      const node = el(name);
+      node.textContent = text ?? '';
+      node.hidden = !text;
+      if (lang) node.setAttribute('lang', lang);
+      else node.removeAttribute('lang');
+    };
+
+    const embedFor = (f: ClientFilm) => {
+      if (f.platform === 'facebook') {
+        const w = Math.round(screen.clientWidth || 1280);
+        return `${f.embed}&width=${w}&height=${Math.round((w * 9) / 16)}`;
+      }
+      return f.embed;
+    };
+
+    const fill = (f: ClientFilm) => {
+      current = f;
+      dialog.style.setProperty('--accent', f.accent);
+      dialog.style.setProperty('--th-poster', f.posterSmall ? `url(${f.posterSmall})` : 'none');
+      setText('kind', `${f.kind}, ${f.year}`);
+      setText('title', f.title, f.language);
+      setText('sub', f.subtitle ?? f.titleLatin);
+      setText('logline', f.logline || null, f.loglineLang);
+      setText('notes', f.notes || null, f.notesLang);
+
+      const facts: [string, string, string?][] = [['Runtime', f.runtimeLabel]];
+      if (f.place) facts.push(['Where', f.place]);
+      if (f.viewsLabel) facts.push([`On ${f.viewsWhere}`, f.viewsLabel, 'views']);
+      f.credits.forEach((c) => facts.push([c.role, c.name]));
+      el('facts').replaceChildren(
+        ...facts.flatMap(([dt, dd, cls]) => {
+          const wrap = document.createElement('div');
+          const t = document.createElement('dt');
+          const d = document.createElement('dd');
+          t.textContent = dt;
+          d.textContent = dd;
+          if (cls) d.className = cls;
+          wrap.append(t, d);
+          return [wrap];
+        }),
+      );
+
+      const links: [string, string][] = [];
+      if (f.youtubeUrl) links.push(['Watch on YouTube', f.youtubeUrl]);
+      if (f.facebookUrl) links.push([f.youtubeUrl ? 'Also on Facebook' : 'Watch on Facebook', f.facebookUrl]);
+      links.push(['Film page', `/films/${f.slug}/`]);
+      el('links').replaceChildren(
+        ...links.map(([label, href]) => {
+          const a = document.createElement('a');
+          a.href = href;
+          a.textContent = label;
+          if (href.startsWith('http')) {
+            a.target = '_blank';
+            a.rel = 'noopener';
+          }
+          return a;
+        }),
+      );
+
+      const i = films.findIndex((x) => x.slug === f.slug);
+      const prev = films[i - 1];
+      const next = films[i + 1];
+      const [prevBtn, nextBtn] = dialog.querySelectorAll<HTMLButtonElement>('[data-th-step]');
+      prevBtn.hidden = !prev;
+      nextBtn.hidden = !next;
+      setText('prev', prev ? prev.titleLatin ?? prev.title : '');
+      setText('next', next ? next.titleLatin ?? next.title : '');
+    };
+
+    const play = (f: ClientFilm) => {
+      const iframe = document.createElement('iframe');
+      iframe.title = `${f.titleLatin ?? f.title}, video player`;
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write; web-share';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      screen.replaceChildren(iframe);
+      // Size is known once the dialog is laid out.
+      requestAnimationFrame(() => (iframe.src = embedFor(f)));
+    };
+
+    const open = (slug: string, opts: { push?: boolean; trigger?: HTMLElement | null } = {}) => {
+      const f = findFilm(slug);
+      if (!f) return;
+      if (!dialog.open) {
+        returnFocus = opts.trigger ?? (document.activeElement as HTMLElement);
+        dialog.showModal();
+      }
+      fill(f);
+      play(f);
+      dialog.scrollTop = 0;
+      document.title = `${f.titleLatin ?? f.title} | Aseer Intiser Niloy`;
+      if (opts.push !== false) {
+        const url = `/films/${f.slug}/`;
+        if (pushed) history.replaceState({ film: f.slug }, '', url);
+        else history.pushState({ film: f.slug }, '', url);
+        pushed = true;
+      }
+      dialog.querySelector<HTMLButtonElement>('[data-th-close]')!.focus({ preventScroll: true });
+    };
+
+    const originalTitle = document.title;
+    const close = (fromHistory = false) => {
+      screen.replaceChildren();
+      if (dialog.open) dialog.close();
+      document.title = originalTitle;
+      if (pushed && !fromHistory) history.back();
+      pushed = false;
+      returnFocus?.focus({ preventScroll: true });
+    };
+
+    window.addEventListener('film:open', (e) => {
+      const { slug, trigger } = (e as CustomEvent).detail;
+      open(slug, { trigger });
+    });
+
+    document.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest<HTMLElement>('[data-open-film]');
+      if (!link || e.metaKey || e.ctrlKey || e.shiftKey || (e as MouseEvent).button > 0) return;
+      e.preventDefault();
+      open(link.dataset.openFilm!, { trigger: link });
+    });
+
+    dialog.querySelector('[data-th-close]')!.addEventListener('click', () => close());
+    dialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      close();
+    });
+    dialog.querySelectorAll<HTMLButtonElement>('[data-th-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (!current) return;
+        const i = films.findIndex((x) => x.slug === current!.slug);
+        const target = films[i + Number(b.dataset.thStep)];
+        if (target) open(target.slug);
+      }),
+    );
+
+    window.addEventListener('popstate', (e) => {
+      const slug = (e.state as { film?: string } | null)?.film;
+      if (slug && location.pathname !== homePath) {
+        pushed = true;
+        open(slug, { push: false });
+      } else if (dialog.open) {
+        pushed = false;
+        close(true);
+      }
+    });
+  }
+</script>

@@ -1,0 +1,302 @@
+---
+import Poster from './Poster.astro';
+import { selected } from '../lib/films';
+
+// Rhythm: wide, pair, wide, pair, wide...
+const rows: (typeof selected)[] = [];
+let i = 0;
+let wide = true;
+while (i < selected.length) {
+  const take = wide ? 1 : 2;
+  rows.push(selected.slice(i, i + take));
+  i += take;
+  wide = !wide;
+}
+---
+
+<section id="selected" class="selected" aria-labelledby="selected-title">
+  <div class="head">
+    <h2 id="selected-title">Selected films</h2>
+    <p>The ones I would show you first.</p>
+  </div>
+
+  <div class="rows">
+    {
+      rows.map((row) => (
+        <div class:list={['row', row.length === 1 ? 'is-wide' : 'is-pair']}>
+          {row.map((f) => (
+            <article class="film" style={`--accent:${f.accent}`}>
+              <a
+                class="frame"
+                href={`/films/${f.slug}/`}
+                data-open-film={f.slug}
+                data-preview={f.platform === 'youtube' ? f.videoId : undefined}
+                data-start={Math.round(f.runtime * 0.3)}
+                aria-label={`Watch ${f.plainTitle}`}
+              >
+                <Poster film={f} class="still" alt="" />
+                <span class="preview" aria-hidden="true" />
+                <span class="cue" aria-hidden="true">
+                  <svg viewBox="0 0 10 12">
+                    <path d="M0 0l10 6-10 6z" fill="currentColor" />
+                  </svg>
+                  Watch
+                </span>
+              </a>
+              <div class="caption">
+                <h3 lang={f.language ?? undefined}>
+                  <a href={`/films/${f.slug}/`} data-open-film={f.slug}>
+                    {f.title}
+                  </a>
+                </h3>
+                <p class="facts">
+                  <span>{f.kind}</span>
+                  <span>{f.year}</span>
+                  <span class="tc">{f.runtimeLabel}</span>
+                  {f.viewsLabel && <span class="views">{f.viewsLabel}</span>}
+                </p>
+                {f.logline && (
+                  <p class="logline" lang={f.loglineLang ?? undefined}>
+                    {f.logline}
+                  </p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .selected {
+    padding: clamp(5rem, 11vw, 9rem) var(--gutter) clamp(2rem, 5vw, 4rem);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  h2 {
+    font-size: var(--step-5);
+    font-weight: 430;
+    letter-spacing: -0.01em;
+  }
+  .head p {
+    color: var(--dust);
+    font-size: var(--step-1);
+    font-weight: 340;
+  }
+  .rows {
+    display: grid;
+    gap: clamp(3.5rem, 9vw, 7.5rem);
+  }
+  .row {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .row.is-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  /* The second of a pair sits lower, like a contact sheet that was not lined up */
+  .row.is-pair .film:nth-child(2) {
+    margin-top: clamp(0rem, 8vw, 7rem);
+  }
+
+  .frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--screen);
+    aspect-ratio: 16 / 9;
+    container-type: size;
+  }
+  .is-wide .frame {
+    aspect-ratio: 2.39 / 1;
+  }
+  .frame :global(.still) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition:
+      transform 1.4s var(--ease-out),
+      filter 0.6s;
+  }
+  .frame:hover :global(.still) {
+    transform: scale(1.03);
+  }
+  .preview {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s;
+    pointer-events: none;
+  }
+  .preview.is-on {
+    opacity: 1;
+  }
+  .preview :global(iframe) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, calc(100cqh * 16 / 9));
+    height: max(100%, 56.25cqw);
+    border: 0;
+    transform: translate(-50%, -50%) scale(1.18);
+  }
+  .cue {
+    position: absolute;
+    left: 1.1rem;
+    bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.5rem 0.9rem 0.45rem;
+    background: rgb(0 0 0 / 0.55);
+    backdrop-filter: blur(8px);
+    font-size: 0.875rem;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.3s,
+      transform 0.4s var(--ease-out);
+  }
+  .cue svg {
+    width: 0.6rem;
+  }
+  .frame:hover .cue,
+  .frame:focus-visible .cue {
+    opacity: 1;
+    transform: none;
+  }
+
+  .caption {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+  }
+  .is-wide .caption {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: clamp(1.5rem, 5vw, 5rem);
+  }
+  .is-wide .caption h3 {
+    grid-row: span 2;
+  }
+  h3 {
+    font-size: var(--step-3);
+    font-weight: 440;
+  }
+  .is-wide h3 {
+    font-size: var(--step-4);
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--accent);
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
+    color: var(--dust);
+    font-size: 0.9375rem;
+  }
+  .facts .tc {
+    font-size: 0.8125rem;
+    line-height: 1.75;
+  }
+  .views {
+    color: var(--accent);
+  }
+  .logline {
+    max-width: 44ch;
+    font-weight: 340;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 720px) {
+    .row.is-pair {
+      grid-template-columns: 1fr;
+    }
+    .row.is-pair .film:nth-child(2) {
+      margin-top: 0;
+    }
+    .is-wide .frame {
+      aspect-ratio: 16 / 9;
+    }
+    .is-wide .caption {
+      grid-template-columns: 1fr;
+    }
+    .is-wide .caption h3 {
+      grid-row: auto;
+      font-size: var(--step-3);
+    }
+    .cue {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { prefersReducedMotion } from '../scripts/data';
+
+  // Hovering a frame plays a quiet, muted moment from the film.
+  const canPreview =
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    !prefersReducedMotion() &&
+    !(navigator as any).connection?.saveData;
+
+  if (canPreview) {
+    document.querySelectorAll<HTMLAnchorElement>('.selected .frame[data-preview]').forEach((frame) => {
+      const slot = frame.querySelector<HTMLElement>('.preview')!;
+      let timer: number | undefined;
+      let reveal: number | undefined;
+      const start = () => {
+        timer = window.setTimeout(() => {
+          const id = frame.dataset.preview;
+          const params = new URLSearchParams({
+            autoplay: '1',
+            mute: '1',
+            controls: '0',
+            playsinline: '1',
+            start: frame.dataset.start || '0',
+            rel: '0',
+            iv_load_policy: '3',
+            disablekb: '1',
+            loop: '1',
+            playlist: id!,
+          });
+          const iframe = document.createElement('iframe');
+          iframe.src = `https://www.youtube-nocookie.com/embed/${id}?${params}`;
+          iframe.allow = 'autoplay; encrypted-media';
+          iframe.tabIndex = -1;
+          iframe.title = '';
+          slot.replaceChildren(iframe);
+          // Wait out the player's own loading chrome before showing it.
+          reveal = window.setTimeout(() => slot.classList.add('is-on'), 1400);
+        }, 350);
+      };
+      const stop = () => {
+        clearTimeout(timer);
+        clearTimeout(reveal);
+        slot.classList.remove('is-on');
+        window.setTimeout(() => {
+          if (!slot.classList.contains('is-on')) slot.replaceChildren();
+        }, 600);
+      };
+      frame.addEventListener('pointerenter', start);
+      frame.addEventListener('pointerleave', stop);
+    });
+  }
+</script>

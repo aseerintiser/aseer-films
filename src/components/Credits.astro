@@ -1,0 +1,147 @@
+---
+import { site, films, totalViews } from '../lib/films';
+
+const watched = `${Math.floor(totalViews / 10000) * 10}K`;
+const thanks = ['Naheen Ibn Akbar', 'MD Ashiqur Rahman', 'Team Interaction with Robots', "SWE'18 and CSE'18 at IUT", 'Everyone who stood in front of the camera'];
+const year = new Date().getFullYear();
+---
+
+<section id="credits" class="credits" aria-labelledby="credits-title">
+  <div class="roll">
+    <p class="role">Films by</p>
+    <h2 id="credits-title">Aseer Intiser Niloy</h2>
+
+    <div class="about">
+      <p>
+        I am a Bangladeshi filmmaker and UX designer living in Tampere, Finland. I started making videos for friends'
+        birthdays in 2015, and somewhere along the way it turned into travel films, tributes and short stories.
+      </p>
+      <p>
+        I shoot and edit my own films. Since 2025 I publish them on Bohrscope, a name taken from the bioscope, the old
+        storytelling machine, and from Bohr, my creative alter ego. Together, these {films.length} films have been watched
+        more than {watched} times on YouTube and Facebook.
+      </p>
+    </div>
+
+    <p class="role">With thanks to</p>
+    <ul class="names">
+      {thanks.map((n) => <li>{n}</li>)}
+    </ul>
+
+    <p class="role" id="contact">Say hello</p>
+    <a class="email" href={`mailto:${site.email}`}>{site.email}</a>
+    <ul class="links">
+      {
+        site.links.map((l) => (
+          <li>
+            <a href={l.href} target="_blank" rel="noopener">
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="day">
+      By day I design digital products. See that work at <a href={site.designSite}>aseer.design</a>.
+    </p>
+
+    <p class="fin" aria-hidden="true">Fin.</p>
+    <p class="copy">© 2015–{year} {site.name}</p>
+  </div>
+</section>
+
+<style>
+  .credits {
+    padding: clamp(6rem, 14vw, 11rem) var(--gutter) 3rem;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+  }
+  .roll {
+    max-width: 40rem;
+    margin: 0 auto;
+    display: grid;
+    justify-items: center;
+  }
+  .role {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    font-size: var(--step--1);
+    color: var(--dust);
+    letter-spacing: 0.04em;
+  }
+  .role:first-child {
+    margin-top: 0;
+  }
+  h2 {
+    margin-top: 0.75rem;
+    font-size: var(--step-4);
+    font-weight: 460;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+  .about {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 2rem;
+    max-width: 34rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    font-weight: 340;
+  }
+  .names,
+  .links {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.45rem;
+    font-size: var(--step-1);
+    font-weight: 360;
+  }
+  .email {
+    margin-top: 1rem;
+    font-size: var(--step-3);
+    font-weight: 400;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+    padding-bottom: 0.2rem;
+    transition: border-color 0.2s;
+    overflow-wrap: anywhere;
+  }
+  .email:hover {
+    border-color: var(--tungsten);
+  }
+  .links {
+    margin-top: 2rem;
+    font-size: var(--step-0);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.75rem;
+  }
+  .links a,
+  .day a {
+    color: var(--dust);
+  }
+  .links a:hover,
+  .day a:hover {
+    color: var(--light);
+  }
+  .day {
+    margin-top: 1.5rem;
+    color: var(--dust);
+    font-size: 0.9375rem;
+  }
+  .fin {
+    margin-top: clamp(6rem, 14vw, 10rem);
+    font-size: clamp(4rem, 2rem + 9vw, 9rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .copy {
+    margin-top: 2.5rem;
+    color: var(--dust);
+    font-size: var(--step--1);
+  }
+</style>
