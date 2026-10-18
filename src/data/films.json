@@ -361,6 +361,22 @@
       "views": { "facebook": 37000 }
     },
     {
+      "slug": "break-the-circle",
+      "title": "Break The Circle, Season IX",
+      "subtitle": "The Exhibition",
+      "url": "https://www.youtube.com/watch?v=NsUWjCYkbuU",
+      "date": "2020-02-28",
+      "runtime": 95,
+      "kind": "Campus",
+      "accent": "#bd3821",
+      "views": { "youtube": 328 },
+      "logline": "A throwback to Break The Circle, Season IX: The Exhibition, made for IUTPS.",
+      "credits": [
+        { "role": "Cinematography", "name": "Shadman Afif" },
+        { "role": "Editing", "name": "Md Aseer Intiser" }
+      ]
+    },
+    {
       "slug": "keokradong",
       "note": "first Keokradong film",
       "title": "Keokradong",
