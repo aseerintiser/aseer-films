@@ -16,7 +16,7 @@ The film portfolio of **Md Aseer Intiser**, a Bangladeshi filmmaker and UX desig
 
 | Scene | What happens |
 | --- | --- |
-| **The peephole** | A black screen with a small lens that follows the cursor. Through it, the films are already playing. Visitors enter with sound or in silence, and the lens irises open to full screen. |
+| **The peephole** | A black screen with a small lens that follows the cursor. Through it, the films are already playing. Visitors enter with sound or in silence, and the lens irises open to full screen. It plays on every new visit and reload, and steps aside while someone is browsing within the site. |
 | **Title card** | The BOHRSCOPE wordmark builds letter by letter over a trailer that cuts between real films, with gate weave, light leaks and a flash on every cut. With sound on, each film's own audio fades into the next. |
 | **Now showing** | A projection room. A beam with drifting dust falls on a screen showing a live, muted preview of the selected films. |
 | **Four reels** | Every film, newest first, told in Aseer's own words as subtitles: *Latest films*, *Stories, trips and life*, *Hits and hills*, *Where it started*. Each reel is a 35mm strip that slides sideways as you scroll. The frame in the gate lights up and flickers, and red grease-pencil notes mark real milestones. |

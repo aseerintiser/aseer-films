@@ -43,14 +43,19 @@ const payload = JSON.stringify(films.map(clientFilm));
     {
       intro && (
         <script is:inline>
+          // The peephole greets every new visit and every reload. It stays out of the way
+          // when someone is already moving around the site, jumps to a section, or prefers less motion.
           try {
-            if (
-              !sessionStorage.getItem('peeped') &&
-              !matchMedia('(prefers-reduced-motion: reduce)').matches
-            ) {
-              document.documentElement.setAttribute('data-intro', '');
-              sessionStorage.setItem('peeped', '1');
-            }
+            var nav = performance.getEntriesByType('navigation')[0];
+            var type = nav ? nav.type : 'navigate';
+            var fromSite = false;
+            if (document.referrer) fromSite = new URL(document.referrer).origin === location.origin;
+            var show =
+              !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+              !location.hash &&
+              type !== 'back_forward' &&
+              (type === 'reload' || !fromSite);
+            if (show) document.documentElement.setAttribute('data-intro', '');
           } catch (e) {}
         </script>
       )
