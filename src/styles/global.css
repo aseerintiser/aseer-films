@@ -1,6 +1,7 @@
 @import '@fontsource-variable/jost';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/noto-sans-bengali/bengali-400.css';
+@import '@fontsource/caveat/latin-600.css';
 @import '@fontsource/noto-sans-bengali/bengali-500.css';
 
 :root {
@@ -20,6 +21,8 @@
   --font: 'Jost Variable', 'Futura', 'Century Gothic', system-ui, sans-serif;
   --font-bn: 'Noto Sans Bengali', 'Jost Variable', sans-serif;
   --font-tc: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-hand: 'Caveat', 'Segoe Print', cursive;
+  --grease: #ff4a3d; /* grease pencil on film */
 
   /* Modular scale, ratio 1.333 */
   --step--1: 0.8125rem;

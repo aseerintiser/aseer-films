@@ -22,6 +22,7 @@ type RawFilm = {
   views?: { facebook?: number; youtube?: number };
   unconfirmed?: string[];
   early?: boolean;
+  note?: string;
   logline?: string;
   loglineLang?: string;
   notes?: string;
@@ -143,6 +144,29 @@ export const reel: Film[] = data.hero.reel.map(bySlug).filter((f): f is Film => 
 export const selected: Film[] = data.selected.map(bySlug).filter((f): f is Film => Boolean(f));
 
 export const MOST_WATCHED = 3000;
+
+type RawChapter = { id: string; title: string; until: number; lines: string[] };
+
+/** The story, told in chapters. Each film lands in a chapter by its year. */
+export const chapters = (() => {
+  const list = (data as { chapters: RawChapter[] }).chapters;
+  let from = -Infinity;
+  return list.map((c) => {
+    const inChapter = chronological.filter((f) => f.year > from && f.year <= c.until);
+    const years = inChapter.map((f) => f.year);
+    const range = years.length ? [Math.min(...years), Math.max(...years)] : [];
+    from = c.until;
+    return { ...c, films: inChapter, range };
+  });
+})();
+
+/** A grease-pencil note for a film, only from real facts. */
+export function noteFor(f: Film): string | null {
+  if (f.note) return f.note;
+  if (f.slug === films[0]?.slug) return 'newest';
+  if (f.views >= 5000) return `watched ${formatViews(f.views)} times`;
+  return null;
+}
 
 /** Filters for the timeline, only the ones that have films in them. */
 export const filters = (() => {

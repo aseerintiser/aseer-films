@@ -1,0 +1,534 @@
+---
+import Poster from './Poster.astro';
+import { chapters, noteFor } from '../lib/films';
+
+const sprocket = encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='34' height='26'><rect x='10' y='7' width='14' height='12' rx='3' fill='#000'/></svg>`,
+);
+let frameNo = 0;
+---
+
+<div id="story" class="story" style={`--sprocket:url("data:image/svg+xml,${sprocket}")`}>
+  {
+    chapters.map((c, i) => (
+      <section class="reel" id={`reel-${c.id}`} aria-labelledby={`reel-${c.id}-title`} data-reel>
+        <div class="reel-track" data-track>
+          <div class="reel-stage" data-stage>
+            <header class="reel-head">
+              <p class="reel-no">
+                Reel {i + 1} <span>of {chapters.length}</span>
+              </p>
+              <h2 id={`reel-${c.id}-title`}>{c.title}</h2>
+              {c.range.length > 0 && (
+                <p class="reel-years">{c.range[0] === c.range[1] ? c.range[0] : `${c.range[0]}–${c.range[1]}`}</p>
+              )}
+            </header>
+
+            <div class="strip-window">
+              <div class="strip" data-strip>
+                <div class="leader" aria-hidden="true">
+                  <span class="leader-ring">
+                    <span>{i + 1}</span>
+                  </span>
+                </div>
+                {c.films.map((f) => {
+                  frameNo++;
+                  const note = noteFor(f);
+                  return (
+                    <article class="cell" style={`--accent:${f.accent}`} data-cell>
+                      <a
+                        class="frame"
+                        href={`/films/${f.slug}/`}
+                        data-open-film={f.slug}
+                        data-cursor="play"
+                        aria-label={`Watch ${f.plainTitle}, ${f.year}`}
+                      >
+                        <Poster film={f} class="still" alt="" />
+                      </a>
+                      {note && (
+                        <p class="note">
+                          <svg viewBox="0 0 120 60" aria-hidden="true">
+                            <path d="M8 10 C 30 4, 70 6, 92 18 S 104 44, 96 54" />
+                            <path d="M88 46 L 96 55 L 104 46" />
+                          </svg>
+                          <span>{note}</span>
+                        </p>
+                      )}
+                      <div class="cap">
+                        <h3 lang={f.language ?? undefined}>{f.title}</h3>
+                        <p>
+                          {f.kind}, {f.year}
+                          <span class="tc">{f.runtimeLabel}</span>
+                        </p>
+                      </div>
+                      <span class="edge" aria-hidden="true">
+                        BOHRSCOPE ▸ {f.year} ▸ {String(frameNo).padStart(3, '0')}
+                      </span>
+                    </article>
+                  );
+                })}
+                <div class="tail" aria-hidden="true">
+                  End of reel {i + 1}
+                </div>
+              </div>
+            </div>
+
+            <p class="reel-sub" data-sub>
+              {c.lines.map((l, n) => (
+                <span class:list={['line', { 'is-on': n === 0 }]}>{l}</span>
+              ))}
+            </p>
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .story {
+    --strip-h: clamp(12rem, 39svh, 25rem);
+    --hole: 26px;
+    --frame-h: calc(var(--strip-h) - 2 * var(--hole) - 8px);
+    --frame-w: calc(var(--frame-h) * 16 / 9);
+    position: relative;
+  }
+
+  /* Without JS, or with reduced motion, each reel is a plain sideways scroller. */
+  .reel {
+    position: relative;
+    padding-block: clamp(4rem, 9vw, 6rem);
+  }
+  .reel-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: clamp(3.5rem, 7svh, 5rem);
+  }
+  .strip-window {
+    min-width: 0;
+    overflow-x: auto;
+    padding-block: 3.5rem 4.5rem;
+  }
+
+  :global(.story.is-pinned) .reel {
+    padding: 0;
+  }
+  :global(.story.is-pinned) .reel-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    grid-template-rows: auto 1fr auto;
+    gap: 0;
+    padding: calc(3.5rem + clamp(1.5rem, 5svh, 3.5rem)) 0 clamp(1.5rem, 4svh, 2.5rem);
+  }
+  :global(.story.is-pinned) .strip-window {
+    overflow: visible;
+    align-self: center;
+    padding: 0;
+  }
+  :global(.story.is-pinned) .strip {
+    will-change: transform;
+  }
+
+  .reel-head {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 1.5rem;
+    padding-inline: var(--gutter);
+  }
+  .reel-no {
+    grid-column: 1 / -1;
+    font-size: var(--step--1);
+    color: var(--tungsten);
+    letter-spacing: 0.04em;
+  }
+  .reel-no span {
+    color: var(--dust);
+  }
+  h2 {
+    font-size: var(--step-5);
+    font-weight: 430;
+    letter-spacing: -0.01em;
+  }
+  .reel-years {
+    font-family: var(--font-tc);
+    font-size: var(--step-0);
+    color: var(--dust);
+  }
+
+  /* The film strip */
+  .strip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: max-content;
+    height: var(--strip-h);
+    padding-inline: max(var(--gutter), 6vw) 0;
+    background:
+      var(--sprocket) 0 0 / 34px var(--hole) repeat-x,
+      var(--sprocket) 0 100% / 34px var(--hole) repeat-x,
+      linear-gradient(180deg, #1c150f, #120d09 50%, #1c150f);
+    transform: rotate(-1.2deg);
+    transform-origin: 0 50%;
+    box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.9);
+  }
+  :global(.story.is-pinned) .strip {
+    transform: translate3d(var(--x, 0px), 0, 0) rotate(-1.2deg);
+  }
+
+  .leader,
+  .tail {
+    flex: none;
+    display: grid;
+    place-items: center;
+    height: var(--frame-h);
+    width: calc(var(--frame-h) * 1.1);
+    margin-right: 10px;
+    background: #2a2118;
+    color: rgb(237 232 222 / 0.75);
+  }
+  .leader-ring {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    font-size: calc(var(--frame-h) * 0.36);
+    line-height: 1;
+  }
+  .leader-ring::before,
+  .leader-ring::after {
+    content: '';
+    position: absolute;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .leader-ring::before {
+    width: 140%;
+    height: 1px;
+  }
+  .leader-ring::after {
+    width: 1px;
+    height: 140%;
+  }
+  .tail {
+    width: auto;
+    padding-inline: 3rem;
+    margin-right: 0;
+    font-family: var(--font-tc);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    color: var(--dust);
+  }
+
+  .cell {
+    --focus: 0;
+    position: relative;
+    flex: none;
+    width: var(--frame-w);
+    height: var(--frame-h);
+    margin-right: 10px;
+  }
+  .frame {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #000;
+    filter: brightness(calc(0.42 + 0.58 * var(--focus))) saturate(calc(0.6 + 0.4 * var(--focus)));
+  }
+  :global(.story:not(.is-pinned)) .frame {
+    filter: none;
+  }
+  .frame :global(.still) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
+  }
+  .frame:hover :global(.still),
+  .frame:focus-visible :global(.still) {
+    transform: scale(1.04);
+  }
+  /* Light through the gate: the frame in the middle flickers a little */
+  .frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(70% 70% at 50% 50%, rgb(255 236 200 / 0.14), transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .cell.is-gate .frame::after {
+    animation: flicker 0.18s steps(2) infinite;
+  }
+  @keyframes flicker {
+    0% { opacity: 0.25; }
+    50% { opacity: 0.9; }
+  }
+
+  .edge {
+    position: absolute;
+    left: 6px;
+    bottom: calc(-1 * var(--hole) - 2px);
+    font-family: var(--font-tc);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: rgb(232 162 58 / 0.7);
+    white-space: nowrap;
+    line-height: var(--hole);
+    pointer-events: none;
+  }
+
+  .cap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + var(--hole) + 1.2rem);
+    display: grid;
+    gap: 0.25rem;
+    opacity: calc(0.35 + 0.65 * var(--focus));
+    transform: rotate(1.2deg);
+    transform-origin: 0 0;
+  }
+  :global(.story:not(.is-pinned)) .cap {
+    opacity: 1;
+  }
+  .cap h3 {
+    font-size: var(--step-1);
+    font-weight: 440;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cap p {
+    display: flex;
+    gap: 1rem;
+    color: var(--dust);
+    font-size: 0.875rem;
+  }
+  .cap .tc {
+    font-size: 0.8125rem;
+  }
+
+  /* Grease pencil: the editor's notes on the strip */
+  .note {
+    position: absolute;
+    right: 8%;
+    bottom: calc(100% + var(--hole) + 0.2rem);
+    display: flex;
+    align-items: flex-end;
+    gap: 0.2rem;
+    color: var(--grease);
+    font-family: var(--font-hand);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.9rem);
+    line-height: 1;
+    white-space: nowrap;
+    transform: rotate(-3deg);
+    transform-origin: 100% 100%;
+    pointer-events: none;
+  }
+  .note svg {
+    order: 2;
+    width: 3.2rem;
+    height: 1.6rem;
+    margin-bottom: -1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 160;
+    stroke-dashoffset: 0;
+  }
+  :global(.story.is-pinned) .note span {
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.9s steps(14) 0.25s;
+  }
+  :global(.story.is-pinned) .note svg path {
+    stroke-dashoffset: 160;
+    transition: stroke-dashoffset 0.6s ease-out;
+  }
+  :global(.story.is-pinned) .cell.is-seen .note span {
+    clip-path: inset(0 0 0 0);
+  }
+  :global(.story.is-pinned) .cell.is-seen .note svg path {
+    stroke-dashoffset: 0;
+  }
+
+  /* Subtitles: the narrator */
+  .reel-sub {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    min-height: 3.2em;
+    padding-inline: var(--gutter);
+    text-align: center;
+    font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.45rem);
+    font-weight: 450;
+    line-height: 1.35;
+    color: #fff;
+    text-shadow: 0 2px 10px rgb(0 0 0 / 0.8);
+  }
+  .reel-sub .line {
+    grid-area: 1 / 1;
+    max-width: 44ch;
+    align-self: end;
+  }
+  :global(.story.is-pinned) .reel-sub .line {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  :global(.story.is-pinned) .reel-sub .line.is-on {
+    opacity: 1;
+  }
+  :global(.story:not(.is-pinned)) .reel-sub {
+    display: grid;
+    gap: 0.6rem;
+  }
+  :global(.story:not(.is-pinned)) .reel-sub .line {
+    grid-area: auto;
+  }
+
+  @media (max-width: 700px) {
+    .story {
+      --strip-h: clamp(11rem, 34svh, 16rem);
+      --hole: 20px;
+    }
+    .note {
+      right: 2%;
+    }
+    .reel-head {
+      grid-template-columns: 1fr;
+    }
+    .reel-years {
+      margin-top: 0.4rem;
+    }
+  }
+</style>
+
+<script>
+  import { prefersReducedMotion } from '../scripts/data';
+
+  const story = document.querySelector<HTMLElement>('.story');
+  if (story && !prefersReducedMotion()) {
+    story.classList.add('is-pinned');
+
+    type Reel = {
+      track: HTMLElement;
+      stage: HTMLElement;
+      strip: HTMLElement;
+      cells: HTMLElement[];
+      lines: HTMLElement[];
+      distance: number;
+      line: number;
+      active: boolean;
+    };
+
+    const reels: Reel[] = [...story.querySelectorAll<HTMLElement>('[data-reel]')].map((el) => ({
+      track: el.querySelector('[data-track]')!,
+      stage: el.querySelector('[data-stage]')!,
+      strip: el.querySelector('[data-strip]')!,
+      cells: [...el.querySelectorAll<HTMLElement>('[data-cell]')],
+      lines: [...el.querySelectorAll<HTMLElement>('.reel-sub .line')],
+      distance: 0,
+      line: 0,
+      active: false,
+    }));
+
+    const measure = () => {
+      const vw = document.documentElement.clientWidth;
+      const vh = innerHeight;
+      reels.forEach((r) => {
+        // Let the last frame reach the middle of the screen before the reel ends.
+        r.distance = Math.max(0, r.strip.scrollWidth - vw * 0.5);
+        r.track.style.height = `${vh + r.distance}px`;
+      });
+      update();
+    };
+
+    const progressOf = (r: Reel) => {
+      const rect = r.track.getBoundingClientRect();
+      const span = r.track.offsetHeight - innerHeight;
+      return span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
+    };
+
+    const update = () => {
+      const mid = document.documentElement.clientWidth / 2;
+      reels.forEach((r) => {
+        if (!r.active) return;
+        const p = progressOf(r);
+        const x = -p * r.distance;
+        r.strip.style.setProperty('--x', `${x}px`);
+
+        r.cells.forEach((cell) => {
+          const box = cell.getBoundingClientRect();
+          const center = box.left + box.width / 2;
+          const focus = Math.max(0, 1 - Math.abs(center - mid) / (cell.offsetWidth * 1.15));
+          cell.style.setProperty('--focus', focus.toFixed(3));
+          cell.classList.toggle('is-gate', focus > 0.85);
+          if (focus > 0.55) cell.classList.add('is-seen');
+        });
+
+        const n = r.lines.length;
+        const line = Math.min(n - 1, Math.floor(p * n * 0.999));
+        if (line !== r.line) {
+          r.lines[r.line]?.classList.remove('is-on');
+          r.lines[line]?.classList.add('is-on');
+          r.line = line;
+        }
+      });
+    };
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          const r = reels.find((x) => x.track === e.target);
+          if (r) r.active = e.isIntersecting;
+          update();
+        }),
+      { rootMargin: '20% 0px' },
+    );
+    reels.forEach((r) => io.observe(r.track));
+
+    // Keyboard users: bring a focused frame to the middle of the screen.
+    reels.forEach((r) =>
+      r.cells.forEach((cell) =>
+        cell.querySelector('a')?.addEventListener('focus', () => {
+          const vw = document.documentElement.clientWidth;
+          const span = r.track.offsetHeight - innerHeight;
+          const target = Math.min(r.distance, Math.max(0, cell.offsetLeft + cell.offsetWidth / 2 - vw / 2));
+          const p = r.distance ? target / r.distance : 0;
+          const top = r.track.getBoundingClientRect().top + scrollY + p * span;
+          window.scrollTo({ top, behavior: 'instant' as ScrollBehavior });
+        }),
+      ),
+    );
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', measure);
+    document.fonts?.ready.then(measure);
+    measure();
+  }
+</script>

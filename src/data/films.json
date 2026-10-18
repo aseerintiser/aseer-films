@@ -4,6 +4,45 @@
     "reel": ["somewhere-only-we-know", "rangamati-story", "escaping-the-ordinary", "esho-amar-shohore", "kotodure", "keokradong"]
   },
   "selected": ["somewhere-only-we-know", "rangamati-story", "kotodure", "escaping-the-ordinary", "deshantori", "asian-futurism", "esho-amar-shohore"],
+  "chapters": [
+    {
+      "id": "for-friends",
+      "title": "For friends",
+      "until": 2019,
+      "lines": [
+        "I started in 2015, making birthday videos as gifts for friends.",
+        "Then came a tribute to a teacher, and our batch tours."
+      ]
+    },
+    {
+      "id": "into-the-hills",
+      "title": "Into the hills",
+      "until": 2020,
+      "lines": [
+        "“Criticism is highly appreciated.” That is how I shared my first Keokradong film.",
+        "“Ten friends, one destination, a journey to find Neverland.”"
+      ]
+    },
+    {
+      "id": "stories-trips-life",
+      "title": "Stories, trips and life",
+      "until": 2024,
+      "lines": [
+        "“We shared. Stories, trips and life.”",
+        "“A story of three days. A story of seven people. A story of moments when we were infinite.”"
+      ]
+    },
+    {
+      "id": "choosing-now",
+      "title": "Choosing now",
+      "until": 9999,
+      "lines": [
+        "“Maybe the perfect time never really comes. So I’m choosing now.”",
+        "“Not everyone gets to wear the jersey. But some of us are meant to tell the story.”",
+        "“I made a film, after so long.”"
+      ]
+    }
+  ],
   "films": [
     {
       "slug": "somewhere-only-we-know",
@@ -98,6 +137,7 @@
     },
     {
       "slug": "deshantori",
+      "note": "first film on Bohrscope",
       "title": "দেশান্তরী",
       "titleLatin": "Deshantori",
       "subtitle": "The One Who Left",
@@ -339,6 +379,7 @@
     },
     {
       "slug": "keokradong",
+      "note": "first Keokradong film",
       "title": "Keokradong",
       "subtitle": "Into the Nature",
       "url": "https://www.youtube.com/watch?v=Rqa_gT9KXto",

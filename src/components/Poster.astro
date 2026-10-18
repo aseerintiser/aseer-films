@@ -32,24 +32,75 @@ const src = size === 'large' ? film.posterLarge : film.posterSmall;
     />
   ) : (
     <div class:list={[cls, 'title-card']} style={`--card:${film.accent}`} role={alt ? 'img' : undefined} aria-label={alt || undefined}>
-      <span lang={film.language ?? undefined}>{film.title}</span>
+      <div class="tc-inner">
+        <span class="tc-brand">Bohrscope</span>
+        <span class="tc-title" lang={film.language ?? undefined}>{film.title}</span>
+        <span class="tc-meta">{film.kind} · {film.year}</span>
+      </div>
     </div>
   )
 }
 
 <style is:global>
+  /* A typographic poster for films that have no still yet */
   .title-card {
-    display: grid;
-    place-items: center;
-    padding: 8%;
-    text-align: center;
+    position: relative;
+    container-type: inline-size;
+    overflow: hidden;
     background:
-      radial-gradient(120% 90% at 50% 110%, color-mix(in oklab, var(--card) 45%, transparent), transparent 70%),
-      var(--black);
-    font-size: clamp(1rem, 2.4vw, 2.6rem);
-    line-height: 1.15;
-    letter-spacing: 0.06em;
+      radial-gradient(90% 70% at 85% 110%, color-mix(in oklab, var(--card) 70%, transparent), transparent 65%),
+      radial-gradient(60% 50% at 10% -10%, color-mix(in oklab, var(--card) 35%, transparent), transparent 70%),
+      #070707;
+  }
+  .title-card .tc-inner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 6cqi 7cqi;
+    color: var(--light);
+  }
+  .title-card .tc-inner::before {
+    /* Bohr shells as a watermark */
+    content: '';
+    position: absolute;
+    right: -14cqi;
+    top: 50%;
+    width: 70cqi;
+    aspect-ratio: 1;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    border: 1.4cqi solid color-mix(in oklab, var(--card) 40%, transparent);
+    box-shadow:
+      inset 0 0 0 12cqi transparent,
+      inset 0 0 0 13.4cqi color-mix(in oklab, var(--card) 28%, transparent);
+    opacity: 0.6;
+  }
+  .title-card .tc-brand {
+    position: relative;
+    font-size: max(9px, 2.6cqi);
+    letter-spacing: 0.3em;
     text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .title-card .tc-title {
+    position: relative;
+    align-self: end;
+    max-width: 80%;
+    font-size: clamp(14px, 8.5cqi, 120px);
+    font-weight: 480;
+    line-height: 1;
     text-wrap: balance;
+  }
+  .title-card .tc-title:lang(bn) {
+    font-size: clamp(16px, 11cqi, 140px);
+    line-height: 1.2;
+  }
+  .title-card .tc-meta {
+    position: relative;
+    margin-top: 2.5cqi;
+    font-size: max(9px, 2.4cqi);
+    letter-spacing: 0.06em;
+    color: color-mix(in oklab, var(--card) 60%, var(--light));
   }
 </style>
