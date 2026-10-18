@@ -15,12 +15,13 @@
       ]
     },
     {
-      "id": "into-the-hills",
-      "title": "Into the hills",
+      "id": "hits-and-hills",
+      "title": "Hits and hills",
       "until": 2020,
       "lines": [
         "“Criticism is highly appreciated.” That is how I shared my first Keokradong film.",
-        "“Ten friends, one destination, a journey to find Neverland.”"
+        "A 41-second campus cover from that year was watched 37K times.",
+        "And a tribute to Chester Bennington of Linkin Park."
       ]
     },
     {
@@ -62,7 +63,7 @@
       "subtitle": "Tournament teaser",
       "url": "https://www.facebook.com/reel/2246114832508350",
       "date": "2026",
-      "unconfirmed": ["date", "title"],
+      "unconfirmed": ["title"],
       "runtime": 62,
       "kind": "Teaser",
       "place": "Finland",
@@ -77,7 +78,6 @@
       "title": "Where the Lines Divide",
       "url": "https://www.facebook.com/reel/1752926875389057",
       "date": "2026",
-      "unconfirmed": ["date"],
       "runtime": 37,
       "kind": "Short",
       "accent": "#8aa5c3",
@@ -153,21 +153,6 @@
       "notes": "I have been to many places lately, crossing seas, stopping at different ports, watching sunsets I had never seen before. But no matter how far I go, something inside me stays behind. This was the first film on Bohrscope, a channel named after the bioscope, the old storytelling machine, and Bohr, my creative alter ego."
     },
     {
-      "slug": "robocarnival",
-      "title": "Multimodal Robot Interaction",
-      "subtitle": "RoboCarnival 2025",
-      "url": "https://www.youtube.com/watch?v=3H_nQCZ_wbM",
-      "date": "2025-04-24",
-      "runtime": 76,
-      "kind": "Short",
-      "place": "Tampere University, Finland",
-      "accent": "#da5f3b",
-      "views": { "youtube": 116 },
-      "logline": "A teenager meets a talking robot, an emotional one and a pettable robot cat, all in under a minute.",
-      "notes": "A short story about how voice, emotion and touch shape the way we experience social robots. Meet QT, Misty and the Cat Robot. Made for the Social Robots course at Tampere University for RoboCarnival 2025.",
-      "credits": [{ "role": "Designed by", "name": "Team Interaction with Robots" }]
-    },
-    {
       "slug": "wang-yu-sha",
       "title": "A Day in the Life of Wang Yu Sha",
       "subtitle": "Asian Futurism",
@@ -225,7 +210,6 @@
       "titleLatin": "Punorjonmo",
       "url": "https://www.facebook.com/reel/1072599326867171",
       "date": "2024",
-      "unconfirmed": ["date"],
       "runtime": 106,
       "kind": "Short",
       "language": "bn",
@@ -277,7 +261,7 @@
       "title": "One Island, Four Days, Sixteen People",
       "url": "https://www.facebook.com/reel/784192353390103",
       "date": "2023",
-      "unconfirmed": ["date", "title"],
+      "unconfirmed": ["title"],
       "runtime": 304,
       "kind": "Travel",
       "accent": "#8eaaef",
@@ -331,7 +315,7 @@
       "title": "A Tour of IUT",
       "url": "https://www.facebook.com/reel/2642708746003989",
       "date": "2020",
-      "unconfirmed": ["date", "title"],
+      "unconfirmed": ["title"],
       "runtime": 55,
       "kind": "Campus",
       "place": "IUT, Gazipur, Bangladesh",
@@ -344,7 +328,6 @@
       "title": "Keokradong Diary",
       "url": "https://www.facebook.com/reel/2686379911636872",
       "date": "2020",
-      "unconfirmed": ["date"],
       "early": true,
       "runtime": 208,
       "kind": "Travel",
@@ -359,21 +342,21 @@
       "title": "Thank You Chester",
       "url": "https://www.facebook.com/reel/2627873314154199",
       "date": "2020",
-      "unconfirmed": ["date"],
       "runtime": 288,
       "kind": "Tribute",
       "accent": "#9a9a9a",
       "views": { "facebook": 8200 },
-      "logline": "For all the weapons to battle those endless nights."
+      "logline": "A tribute to Chester Bennington of Linkin Park.",
+      "notes": "Thank you Chester, for all the weapons to battle in those endless nights of depression."
     },
     {
       "slug": "disappear-in-heaven",
       "title": "Let's Slowly Disappear in the Heaven",
       "url": "https://www.facebook.com/reel/2575547582720106",
       "date": "2020",
-      "unconfirmed": ["date", "title"],
+      "unconfirmed": ["title"],
       "runtime": 41,
-      "kind": "Short",
+      "kind": "Campus",
       "accent": "#77a9c2",
       "views": { "facebook": 37000 }
     },
@@ -404,7 +387,6 @@
       "subtitle": "Batch tour teaser",
       "url": "https://www.facebook.com/reel/2827240334217495",
       "date": "2019",
-      "unconfirmed": ["date"],
       "early": true,
       "runtime": 83,
       "kind": "Teaser",
