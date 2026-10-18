@@ -18,11 +18,11 @@ The film portfolio of **Md Aseer Intiser**, a Bangladeshi filmmaker and UX desig
 | --- | --- |
 | **The peephole** | A black screen with a small lens that follows the cursor. Through it, the films are already playing. Visitors enter with sound or in silence, and the lens irises open to full screen. |
 | **Title card** | The BOHRSCOPE wordmark builds letter by letter over a trailer that cuts between real films, with gate weave, light leaks and a flash on every cut. With sound on, each film's own audio fades into the next. |
-| **Four reels** | The story, told in Aseer's own words as subtitles: *For friends*, *Into the hills*, *Stories, trips and life*, *Choosing now*. Each reel is a 35mm strip that slides sideways as you scroll. The frame in the gate lights up and flickers, and red grease-pencil notes mark real milestones. |
 | **Now showing** | A projection room. A beam with drifting dust falls on a screen showing a live, muted preview of the selected films. |
+| **Four reels** | Every film, newest first, told in Aseer's own words as subtitles: *Latest films*, *Stories, trips and life*, *Into the hills*, *Where it started*. Each reel is a 35mm strip that slides sideways as you scroll. The frame in the gate lights up and flickers, and red grease-pencil notes mark real milestones. |
 | **The archive** | Every film on an editing timeline. Clip length follows runtime, the playhead drives a preview monitor, and filters pick out travel films, shorts, tributes, the most watched films and early work. |
 | **Theater** | Films play inside the site. The theater opens as an iris from the frame you clicked. Every film also has its own shareable page. |
-| **End credits** | Credits roll over a photo of Aseer behind the camera, with real numbers: films, running time, views, years, places, languages and music. |
+| **End credits** | Credits roll over a photo of Aseer behind the camera, with real numbers: films, running time, views, years and languages. |
 | **After the credits** | The newest film, revealed through an iris, and an invitation to make the next one together. |
 
 ## Features
@@ -116,7 +116,7 @@ To feature a film, add its slug to `selected`. To include it in the opening reel
 
 ### Chapters and notes
 
-- A film lands in a reel by its year. Each chapter in `chapters` has an `until` year and the subtitle `lines` shown while it plays. New films after 2025 go into *Choosing now* automatically.
+- A film lands in a reel by its year. Each chapter in `chapters` (listed oldest first in the file) has an `until` year and the subtitle `lines` shown while it plays. The site shows the reels newest first, and new films from 2025 on go into *Latest films* automatically.
 - Grease-pencil notes appear for the newest film, for films watched 5,000+ times, and for any film with a `note` field, for example `"note": "first film on Bohrscope"`.
 
 ### Facebook films

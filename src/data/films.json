@@ -6,12 +6,12 @@
   "selected": ["somewhere-only-we-know", "rangamati-story", "kotodure", "escaping-the-ordinary", "deshantori", "asian-futurism", "esho-amar-shohore"],
   "chapters": [
     {
-      "id": "for-friends",
-      "title": "For friends",
+      "id": "where-it-started",
+      "title": "Where it started",
       "until": 2019,
       "lines": [
-        "I started in 2015, making birthday videos as gifts for friends.",
-        "Then came a tribute to a teacher, and our batch tours."
+        "It started in 2015, with birthday videos made as gifts for friends.",
+        "Then came our batch tours, and a tribute to a teacher."
       ]
     },
     {
@@ -33,13 +33,13 @@
       ]
     },
     {
-      "id": "choosing-now",
-      "title": "Choosing now",
+      "id": "latest",
+      "title": "Latest films",
       "until": 9999,
       "lines": [
-        "“Maybe the perfect time never really comes. So I’m choosing now.”",
+        "“I made a film, after so long.”",
         "“Not everyone gets to wear the jersey. But some of us are meant to tell the story.”",
-        "“I made a film, after so long.”"
+        "“Maybe the perfect time never really comes. So I’m choosing now.” That is how Bohrscope began in 2025."
       ]
     }
   ],

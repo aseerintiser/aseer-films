@@ -151,13 +151,15 @@ type RawChapter = { id: string; title: string; until: number; lines: string[] };
 export const chapters = (() => {
   const list = (data as { chapters: RawChapter[] }).chapters;
   let from = -Infinity;
-  return list.map((c) => {
+  const chapters = list.map((c) => {
     const inChapter = chronological.filter((f) => f.year > from && f.year <= c.until);
     const years = inChapter.map((f) => f.year);
     const range = years.length ? [Math.min(...years), Math.max(...years)] : [];
     from = c.until;
-    return { ...c, films: inChapter, range };
+    return { ...c, films: [...inChapter].reverse(), range };
   });
+  // Newest first: the strongest work is what visitors meet first.
+  return chapters.reverse();
 })();
 
 /** A grease-pencil note for a film, only from real facts. */

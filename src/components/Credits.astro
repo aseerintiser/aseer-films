@@ -1,7 +1,7 @@
 ---
 import Wordmark from './Wordmark.astro';
 import Poster from './Poster.astro';
-import { site, films, totalViews, totalRuntime, places, languages, music, firstYear, lastYear } from '../lib/films';
+import { site, films, totalViews, totalRuntime, languages, firstYear, lastYear } from '../lib/films';
 
 const hours = Math.floor(totalRuntime / 3600);
 const minutes = Math.floor((totalRuntime % 3600) / 60);
@@ -15,9 +15,7 @@ const rows: { role: string; value: string }[] = [
   { role: 'Running time', value: runtime },
   { role: 'Watched', value: `more than ${watched} times` },
   { role: 'Years', value: `${firstYear}–${lastYear}` },
-  ...(places.length ? [{ role: 'Filmed in', value: places.join(', ') }] : []),
   { role: 'Languages', value: languages.join(', ') },
-  ...(music.length ? [{ role: 'Music by', value: music.join(', ') }] : []),
 ];
 ---
 
