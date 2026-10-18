@@ -591,6 +591,20 @@ const first = reel[0];
       setPaused(paused);
     });
 
+    // Step aside while a film plays in the theater.
+    const inView = () => {
+      const r = hero.getBoundingClientRect();
+      return r.bottom > 0 && r.top < innerHeight && !document.hidden;
+    };
+    window.addEventListener('theater:open', () => {
+      visible = false;
+      setPaused(paused);
+    });
+    window.addEventListener('theater:close', () => {
+      visible = inView();
+      setPaused(paused);
+    });
+
     const tick = (now: number) => {
       if (mode === 'video' && players[live]?.getCurrentTime) {
         tcEl.textContent = timecode(players[live].getCurrentTime());

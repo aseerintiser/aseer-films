@@ -1,0 +1,526 @@
+---
+import Poster from './Poster.astro';
+import { selected } from '../lib/films';
+const first = selected[0];
+---
+
+<section
+  id="selected"
+  class="room"
+  aria-labelledby="room-title"
+  style={`--accent:${first.accent}`}
+  data-room
+  data-slugs={JSON.stringify(selected.map((f) => f.slug))}
+>
+  <div class="room-head">
+    <h2 id="room-title">Now showing</h2>
+    <p>The films I would show you first.</p>
+  </div>
+
+  <div class="hall">
+    <div class="beam" aria-hidden="true"><div class="beam-shape"></div></div>
+    <canvas class="dust" aria-hidden="true"></canvas>
+
+    <div class="screen-wrap">
+      <div class="glow" aria-hidden="true"></div>
+      <button class="screen" type="button" data-cursor="play" data-room-play aria-label={`Watch ${first.plainTitle}`}>
+        {selected.map((f, i) => <Poster film={f} class={i === 0 ? 'still is-on' : 'still'} alt="" deferred={i > 1} />)}
+        <span class="live" data-live aria-hidden="true"><span id="room-player"></span></span>
+        <span class="flicker" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="info" aria-live="polite">
+      <p class="kind" data-r="kind">{first.kind}, {first.year}</p>
+      <h3 data-r="title" lang={first.language ?? undefined}>{first.title}</h3>
+      <p class="logline" data-r="logline" lang={first.loglineLang ?? undefined} hidden={!first.logline}>{first.logline}</p>
+      <div class="info-foot">
+        <button class="btn" type="button" data-room-watch data-cursor="play">
+          <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z" fill="currentColor"></path></svg>
+          Watch film
+        </button>
+        <span class="facts">
+          <span class="tc" data-r="runtime">{first.runtimeLabel}</span>
+          <span class="views" data-r="views" hidden={!first.viewsLabel}>{first.viewsLabel}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="program" aria-label="Choose a film to project">
+    {
+      selected.map((f, i) => (
+        <li>
+          <button type="button" data-pick={i} aria-pressed={i === 0 ? 'true' : 'false'} style={`--c:${f.accent}`}>
+            <span class="p-title" lang={f.language ?? undefined}>
+              {f.title}
+            </span>
+            <span class="p-year">{f.year}</span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .room {
+    position: relative;
+    padding: clamp(5rem, 11vw, 9rem) var(--gutter) clamp(4rem, 8vw, 6rem);
+    overflow: hidden;
+  }
+  .room-head {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+  }
+  h2 {
+    font-size: var(--step-5);
+    font-weight: 430;
+    letter-spacing: -0.01em;
+  }
+  .room-head p {
+    color: var(--dust);
+    font-size: var(--step-1);
+    font-weight: 340;
+  }
+
+  .hall {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(15rem, 1fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: end;
+    margin-top: clamp(5rem, 12vw, 9rem);
+  }
+  /* The projector beam: light from behind the audience, falling on the screen */
+  .beam {
+    position: absolute;
+    left: 0;
+    width: calc((100% - clamp(1.5rem, 4vw, 4rem)) * 2.2 / 3.2);
+    bottom: 0;
+    height: calc(100% + clamp(5rem, 12vw, 9rem) + 14rem);
+    filter: blur(22px);
+    opacity: 0.75;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 50%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 50%);
+  }
+  .beam-shape {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(46% 0, 54% 0, 100% calc(100% - var(--screen-h, 50%)), 100% 100%, 0 100%, 0 calc(100% - var(--screen-h, 50%)));
+    background:
+      repeating-conic-gradient(from 150deg at 50% 0%, rgb(255 244 225 / 0.08) 0deg 0.8deg, transparent 0.8deg 2.6deg),
+      linear-gradient(to bottom, rgb(255 238 210 / 0.02), color-mix(in oklab, var(--accent) 18%, rgb(255 238 210 / 0.16)) 75%);
+    transition: background 0.8s;
+  }
+  .dust {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc((100% - clamp(1.5rem, 4vw, 4rem)) * 2.2 / 3.2);
+    height: calc(100% + clamp(5rem, 12vw, 9rem) + 14rem);
+    clip-path: polygon(46% 0, 54% 0, 100% calc(100% - var(--screen-h, 50%)), 100% 100%, 0 100%, 0 calc(100% - var(--screen-h, 50%)));
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
+    pointer-events: none;
+  }
+
+  .screen-wrap {
+    position: relative;
+  }
+  .glow {
+    position: absolute;
+    inset: 8% 6%;
+    background: var(--accent);
+    filter: blur(90px);
+    opacity: 0.35;
+    transition: background-color 0.8s;
+  }
+  .screen {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #050505;
+    box-shadow: 0 40px 120px -40px rgb(0 0 0 / 0.9);
+  }
+  .screen :global(.still) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.06);
+    transition:
+      opacity 0.35s steps(3),
+      transform 8s linear;
+  }
+  .screen :global(.still.is-on) {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .live {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.8s;
+    pointer-events: none;
+  }
+  .live.is-on {
+    opacity: 1;
+  }
+  .live :global(iframe) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100cqw, 177.78cqh);
+    height: max(100cqh, 56.25cqw);
+    border: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  .flicker {
+    position: absolute;
+    inset: 0;
+    background: #fff4e0;
+    mix-blend-mode: overlay;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .flicker.is-on {
+    animation: room-flicker 0.5s steps(5);
+  }
+  @keyframes room-flicker {
+    0% { opacity: 0.7; }
+    20% { opacity: 0.1; }
+    40% { opacity: 0.5; }
+    60% { opacity: 0; }
+    80% { opacity: 0.3; }
+    100% { opacity: 0; }
+  }
+
+  .info {
+    position: relative;
+    display: grid;
+    gap: 0.9rem;
+    padding-bottom: 0.25rem;
+  }
+  .kind {
+    color: var(--accent);
+    font-weight: 450;
+    transition: color 0.6s;
+  }
+  h3 {
+    font-size: var(--step-4);
+    font-weight: 440;
+  }
+  .logline {
+    max-width: 36ch;
+    font-size: var(--step-1);
+    line-height: 1.4;
+    font-weight: 340;
+  }
+  .info-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin-top: 0.6rem;
+  }
+  .facts {
+    display: flex;
+    gap: 1rem;
+    color: var(--dust);
+    font-size: 0.9375rem;
+  }
+  .facts .views {
+    color: var(--accent);
+  }
+
+  .program {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2.25rem;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    padding: 1.4rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+  .program button {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    color: var(--dust);
+    font-size: var(--step-1);
+    font-weight: 400;
+    transition: color 0.25s;
+  }
+  .program button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.1rem;
+    height: 2px;
+    background: var(--c);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-out);
+  }
+  .program button:hover {
+    color: var(--light);
+  }
+  .program button[aria-pressed='true'] {
+    color: var(--light);
+  }
+  .program button[aria-pressed='true']::after {
+    transform: none;
+  }
+  .p-year {
+    font-family: var(--font-tc);
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 900px) {
+    .hall {
+      grid-template-columns: 1fr;
+    }
+    .beam,
+    .dust {
+      width: 100%;
+      height: calc(100% + 18rem);
+    }
+    .beam-shape,
+    .dust {
+      clip-path: polygon(44% 0, 56% 0, 100% 40%, 100% 100%, 0 100%, 0 40%);
+    }
+    .program {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0 1.5rem;
+    }
+    .program li {
+      flex: none;
+    }
+  }
+</style>
+
+<script>
+  import { getFilms, openFilm, loadYouTubeApi, prefersReducedMotion } from '../scripts/data';
+  import { isSoundOn, onSound, click } from '../scripts/sound';
+
+  const room = document.querySelector<HTMLElement>('[data-room]');
+  if (room) {
+    const all = getFilms();
+    const picks = [...room.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+    const stills = [...room.querySelectorAll<HTMLElement>('.screen .still')];
+    const selected = JSON.parse(room.dataset.slugs || '[]') as string[];
+    const list = selected.map((s) => all.find((f) => f.slug === s)!);
+    const screen = room.querySelector<HTMLButtonElement>('[data-room-play]')!;
+    const watch = room.querySelector<HTMLButtonElement>('[data-room-watch]')!;
+    const live = room.querySelector<HTMLElement>('[data-live]')!;
+    const flicker = room.querySelector<HTMLElement>('.flicker')!;
+    const field = (n: string) => room.querySelector<HTMLElement>(`[data-r="${n}"]`)!;
+    let active = 0;
+    let visible = false;
+    let theaterOpen = false;
+
+    // Tell the beam where the screen is, so the light lands on it.
+    const hall = room.querySelector<HTMLElement>('.hall')!;
+    const beamEls = [room.querySelector<HTMLElement>('.beam-shape')!, room.querySelector<HTMLCanvasElement>('.dust')!];
+    const fitBeam = () => {
+      const s = screen.getBoundingClientRect();
+      const b = beamEls[0].getBoundingClientRect();
+      const share = b.height ? ((s.height + (hall.getBoundingClientRect().bottom - s.bottom)) / b.height) * 100 : 50;
+      beamEls.forEach((el) => el.style.setProperty('--screen-h', `${share.toFixed(1)}%`));
+    };
+
+    const setLang = (el: HTMLElement, lang: string | null) =>
+      lang ? el.setAttribute('lang', lang) : el.removeAttribute('lang');
+
+    // The live preview: one muted player that follows the selection.
+    let player: any = null;
+    let ready = false;
+    let revealTimer: number | undefined;
+    const canPreview =
+      matchMedia('(min-width: 900px) and (pointer: fine)').matches &&
+      !prefersReducedMotion() &&
+      !(navigator as any).connection?.saveData;
+
+    const playPreview = () => {
+      const f = list[active];
+      if (!player || !ready || !visible || f.platform !== 'youtube') return;
+      live.classList.remove('is-on');
+      clearTimeout(revealTimer);
+      player.loadVideoById({ videoId: f.videoId, startSeconds: Math.round(f.runtime * 0.3) });
+      if (isSoundOn()) {
+        player.unMute();
+        player.setVolume(55);
+      } else player.mute();
+    };
+
+    const ensurePlayer = () => {
+      if (player || !canPreview) return;
+      player = 'loading';
+      loadYouTubeApi().then((YT) => {
+        player = new YT.Player('room-player', {
+          host: 'https://www.youtube-nocookie.com',
+          playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, playsinline: 1, rel: 0, mute: 1, loop: 1, origin: location.origin },
+          events: {
+            onReady: (e: any) => {
+              ready = true;
+              e.target.mute();
+              e.target.getIframe().setAttribute('tabindex', '-1');
+              e.target.getIframe().setAttribute('title', 'Preview');
+              playPreview();
+            },
+            onStateChange: (e: any) => {
+              if (e.data === YT.PlayerState.PLAYING) {
+                clearTimeout(revealTimer);
+                revealTimer = window.setTimeout(() => live.classList.add('is-on'), 900);
+              }
+              if (e.data === YT.PlayerState.ENDED) playPreview();
+            },
+          },
+        });
+      }).catch(() => {
+        /* no preview, the still stays */
+      });
+    };
+
+    const pick = (i: number) => {
+      if (i === active) return;
+      active = i;
+      const f = list[i];
+      picks.forEach((p, n) => p.setAttribute('aria-pressed', String(n === i)));
+      stills.forEach((s, n) => {
+        const img = s as HTMLImageElement;
+        if (n === i && img.dataset?.src && !img.getAttribute('src')) img.src = img.dataset.src;
+        s.classList.toggle('is-on', n === i);
+      });
+      // Preload the next still.
+      const next = stills[(i + 1) % stills.length] as HTMLImageElement;
+      if (next?.dataset?.src && !next.getAttribute('src')) next.src = next.dataset.src;
+
+      room.style.setProperty('--accent', f.accent);
+      field('kind').textContent = `${f.kind}, ${f.year}`;
+      field('title').textContent = f.title;
+      setLang(field('title'), f.language);
+      field('logline').textContent = f.logline;
+      field('logline').hidden = !f.logline;
+      setLang(field('logline'), f.loglineLang);
+      field('runtime').textContent = f.runtimeLabel;
+      field('views').textContent = f.viewsLabel ?? '';
+      field('views').hidden = !f.viewsLabel;
+      screen.setAttribute('aria-label', `Watch ${f.titleLatin ?? f.title}`);
+
+      if (!prefersReducedMotion()) {
+        flicker.classList.remove('is-on');
+        void flicker.offsetWidth;
+        flicker.classList.add('is-on');
+      }
+      click(0.5);
+      playPreview();
+    };
+
+    picks.forEach((p, i) => p.addEventListener('click', () => pick(i)));
+    const open = (el: HTMLElement) => openFilm(list[active].slug, el);
+    screen.addEventListener('click', () => open(screen));
+    watch.addEventListener('click', () => open(watch));
+
+    onSound((on) => {
+      if (!player || !ready) return;
+      if (on && visible) {
+        player.unMute();
+        player.setVolume(55);
+      } else player.mute();
+    });
+
+    // Dust floating in the beam.
+    const canvas = beamEls[1] as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+    const motes = Array.from({ length: 90 }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      r: Math.random() * 1.6 + 0.3,
+      vx: (Math.random() - 0.5) * 0.00012,
+      vy: (Math.random() - 0.5) * 0.00012 - 0.00004,
+      a: Math.random() * 0.6 + 0.2,
+      t: Math.random() * Math.PI * 2,
+    }));
+    const sizeCanvas = () => {
+      const dpr = Math.min(2, devicePixelRatio || 1);
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    let raf = 0;
+    const draw = () => {
+      if (!ctx) return;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (const m of motes) {
+        m.x = (m.x + m.vx + 1) % 1;
+        m.y = (m.y + m.vy + 1) % 1;
+        m.t += 0.02;
+        const alpha = m.a * (0.6 + 0.4 * Math.sin(m.t));
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 240, 215, ${alpha})`;
+        ctx.arc(m.x * w, m.y * h, m.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      raf = requestAnimationFrame(draw);
+    };
+
+    new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible) {
+          fitBeam();
+          sizeCanvas();
+          ensurePlayer();
+          if (ready && !theaterOpen) {
+            if (player.getPlayerState?.() === 2) player.playVideo();
+            else playPreview();
+          }
+          if (!prefersReducedMotion()) {
+            cancelAnimationFrame(raf);
+            draw();
+          }
+        } else {
+          cancelAnimationFrame(raf);
+          if (ready) player.pauseVideo?.();
+        }
+      },
+      { threshold: 0.15 },
+    ).observe(room);
+    addEventListener('resize', () => {
+      fitBeam();
+      sizeCanvas();
+    });
+
+    // Step aside while a film plays in the theater.
+    window.addEventListener('theater:open', () => {
+      theaterOpen = true;
+      if (ready) player.pauseVideo?.();
+    });
+    window.addEventListener('theater:close', () => {
+      theaterOpen = false;
+      if (ready && visible) player.playVideo?.();
+    });
+
+  }
+</script>

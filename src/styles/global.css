@@ -199,7 +199,29 @@ p {
   100% { transform: translate(-1%, 4%); }
 }
 
+/* Moving between pages: an iris opens on the new page */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  animation: page-iris 0.7s cubic-bezier(0.7, 0, 0.2, 1);
+}
+@keyframes page-iris {
+  from {
+    clip-path: circle(0 at 50% 50%);
+  }
+  to {
+    clip-path: circle(150vmax at 50% 50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none;
+  }
   html {
     scroll-behavior: auto;
   }

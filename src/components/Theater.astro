@@ -52,17 +52,21 @@
     overscroll-behavior: contain;
   }
   .theater::backdrop {
-    background: var(--black);
+    background: transparent;
   }
+  /* The theater opens like an iris from the frame you clicked, and closes the same way */
   .theater[open] {
-    animation: th-in 0.5s var(--ease-film);
+    animation: th-iris 0.75s cubic-bezier(0.7, 0, 0.2, 1);
   }
-  @keyframes th-in {
+  .theater.is-closing {
+    animation: th-iris 0.45s cubic-bezier(0.7, 0, 0.2, 1) reverse forwards;
+  }
+  @keyframes th-iris {
     from {
-      clip-path: inset(50% 0 50% 0);
+      clip-path: circle(0 at var(--ox, 50%) var(--oy, 50%));
     }
     to {
-      clip-path: inset(0 0 0 0);
+      clip-path: circle(150vmax at var(--ox, 50%) var(--oy, 50%));
     }
   }
   html:has(.theater[open]) {
@@ -217,7 +221,8 @@
 </style>
 
 <script>
-  import { getFilms, findFilm } from '../scripts/data';
+  import { getFilms, findFilm, prefersReducedMotion } from '../scripts/data';
+  import { click } from '../scripts/sound';
   import type { ClientFilm } from '../lib/films';
 
   const dialog = document.querySelector<HTMLDialogElement>('.theater');
@@ -316,7 +321,13 @@
       if (!f) return;
       if (!dialog.open) {
         returnFocus = opts.trigger ?? (document.activeElement as HTMLElement);
+        const box = opts.trigger?.getBoundingClientRect();
+        dialog.style.setProperty('--ox', box ? `${box.left + box.width / 2}px` : '50%');
+        dialog.style.setProperty('--oy', box ? `${box.top + box.height / 2}px` : '50%');
+        dialog.classList.remove('is-closing');
         dialog.showModal();
+        click(0.8);
+        window.dispatchEvent(new CustomEvent('theater:open'));
       }
       fill(f);
       play(f);
@@ -332,13 +343,25 @@
     };
 
     const originalTitle = document.title;
+    let closing = false;
     const close = (fromHistory = false) => {
-      screen.replaceChildren();
-      if (dialog.open) dialog.close();
+      if (closing) return;
+      const finish = () => {
+        closing = false;
+        dialog.classList.remove('is-closing');
+        screen.replaceChildren();
+        if (dialog.open) dialog.close();
+        window.dispatchEvent(new CustomEvent('theater:close'));
+        returnFocus?.focus({ preventScroll: true });
+      };
       document.title = originalTitle;
       if (pushed && !fromHistory) history.back();
       pushed = false;
-      returnFocus?.focus({ preventScroll: true });
+      if (!dialog.open || prefersReducedMotion()) return finish();
+      closing = true;
+      screen.replaceChildren();
+      dialog.classList.add('is-closing');
+      setTimeout(finish, 430);
     };
 
     window.addEventListener('film:open', (e) => {
