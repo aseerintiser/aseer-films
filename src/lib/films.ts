@@ -201,6 +201,26 @@ export function filterTags(f: Film): string {
 export const firstYear = Math.min(...films.map((f) => f.year));
 export const lastYear = Math.max(...films.map((f) => f.year));
 export const totalViews = films.reduce((n, f) => n + f.views, 0);
+export const totalRuntime = films.reduce((n, f) => n + f.runtime, 0);
+
+/** Where the films were made, as short place names. */
+export const places = [
+  ...new Set(
+    chronological
+      .map((f) => f.place?.split(',').map((p) => p.trim()) ?? [])
+      .filter((parts) => parts.length >= 2)
+      .map((parts) => parts[parts.length - 2].replace(/ University$/, '')),
+  ),
+];
+
+export const languages = films.some((f) => f.language === 'bn') ? ['Bangla', 'English'] : ['English'];
+
+/** Music credited in the films. */
+export const music = [
+  ...new Set(
+    films.flatMap((f) => (f.credits ?? []).filter((c) => c.role === 'Music').map((c) => c.name.split(',')[0].trim())),
+  ),
+];
 
 /** The slice of data the browser scripts need. */
 export function clientFilm(f: Film) {

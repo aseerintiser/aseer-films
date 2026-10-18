@@ -1,26 +1,69 @@
 ---
-import { site, films, totalViews } from '../lib/films';
+import Wordmark from './Wordmark.astro';
+import Poster from './Poster.astro';
+import { site, films, totalViews, totalRuntime, places, languages, music, firstYear, lastYear } from '../lib/films';
 
+const hours = Math.floor(totalRuntime / 3600);
+const minutes = Math.floor((totalRuntime % 3600) / 60);
+const runtime = [hours ? `${hours} hour${hours > 1 ? 's' : ''}` : '', `${minutes} minutes`].filter(Boolean).join(' ');
 const watched = `${Math.floor(totalViews / 10000) * 10}K`;
+const newest = films[0];
 const year = new Date().getFullYear();
+
+const rows: { role: string; value: string }[] = [
+  { role: 'Films', value: String(films.length) },
+  { role: 'Running time', value: runtime },
+  { role: 'Watched', value: `more than ${watched} times` },
+  { role: 'Years', value: `${firstYear}–${lastYear}` },
+  ...(places.length ? [{ role: 'Filmed in', value: places.join(', ') }] : []),
+  { role: 'Languages', value: languages.join(', ') },
+  ...(music.length ? [{ role: 'Music by', value: music.join(', ') }] : []),
+];
 ---
 
-<section id="credits" class="credits" aria-labelledby="credits-title">
-  <div class="roll">
-    <p class="role">Films by</p>
-    <h2 id="credits-title">Md Aseer Intiser</h2>
+<section id="credits" class="credits" aria-labelledby="credits-title" data-credits>
+  <div class="backdrop">
+    <img
+      src="/about/aseer-with-camera.webp"
+      alt="Md Aseer Intiser on a beach at sunset, holding a camera up to his eye"
+      width="900"
+      height="900"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
 
-    <div class="about">
-      <p>
-        I am a Bangladeshi filmmaker and UX designer living in Tampere, Finland. I started making videos for friends'
-        birthdays in 2015, and somewhere along the way it turned into travel films, tributes and short stories.
-      </p>
-      <p>
-        I shoot and edit my own films. Since 2025 I publish them on Bohrscope, a name taken from the bioscope, the old
-        storytelling machine, and from Bohr, my creative alter ego. Together, these {films.length} films have been watched
-        more than {watched} times on YouTube and Facebook.
-      </p>
+  <div class="roll">
+    <p class="presents">A Bohrscope picture</p>
+    <Wordmark class="credits-wm" />
+
+    <p class="role" id="credits-title">Films by</p>
+    <p class="name">{site.name}</p>
+
+    <div class="lens" data-lens>
+      <p class="role">Behind the lens</p>
+      <div class="about">
+        <p>
+          I am a Bangladeshi filmmaker, and by day a UX designer. I started in 2015 with birthday videos for friends, and
+          somewhere along the way it turned into travel films, tributes and short stories.
+        </p>
+        <p>
+          Bohrscope is my channel. The name comes from the bioscope, the old storytelling box, and from Bohr, my creative
+          alter ego. It means seeing the world through my scope.
+        </p>
+      </div>
     </div>
+
+    <dl class="rows">
+      {
+        rows.map((r) => (
+          <div>
+            <dt>{r.role}</dt>
+            <dd>{r.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
 
     <p class="role" id="contact">Say hello</p>
     <a class="email" href={`mailto:${site.email}`}>{site.email}</a>
@@ -35,60 +78,142 @@ const year = new Date().getFullYear();
         ))
       }
     </ul>
-    <p class="day">
-      By day I design digital products. See that work at <a href={site.designSite}>aseer.design</a>.
-    </p>
-
-    <p class="copy">© 2015–{year} {site.name}</p>
+    <p class="day">My design work lives at <a href={site.designSite}>aseer.design</a>.</p>
   </div>
+</section>
+
+<section class="after" aria-labelledby="after-title" data-after>
+  <p class="after-label">After the credits</p>
+  <a class="after-frame" href={`/films/${newest.slug}/`} data-open-film={newest.slug} data-cursor="play" aria-label={`Watch ${newest.plainTitle}, the newest film`}>
+    <Poster film={newest} class="after-still" alt="" />
+  </a>
+  <h2 id="after-title">
+    <span class="after-kicker">The newest film</span>
+    <span lang={newest.language ?? undefined}>{newest.title}</span>
+  </h2>
+  <p class="after-line">Let’s make the next one together.</p>
+  <a class="btn" href={`mailto:${site.email}`}>Write to me</a>
+  <p class="copy">© 2015–{year} {site.name}</p>
 </section>
 
 <style>
   .credits {
-    padding: clamp(6rem, 14vw, 11rem) var(--gutter) 3rem;
+    position: relative;
     border-top: 1px solid var(--rule);
-    text-align: center;
   }
+  /* The photo stays put while the credits roll over it */
+  .backdrop {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    margin-bottom: -100svh;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .backdrop img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: min(62vw, 100svh);
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    opacity: 0.22;
+    filter: saturate(0.8);
+    -webkit-mask-image: linear-gradient(to left, #000 35%, transparent);
+    mask-image: linear-gradient(to left, #000 35%, transparent);
+    transform: scale(1.08);
+    transition:
+      opacity 1.4s ease,
+      transform 6s ease-out,
+      filter 1.4s;
+  }
+  .credits.is-lit .backdrop img {
+    opacity: 0.6;
+    filter: saturate(1.05);
+    transform: scale(1);
+  }
+
   .roll {
-    max-width: 40rem;
-    margin: 0 auto;
+    position: relative;
     display: grid;
     justify-items: center;
+    width: min(100%, 44rem);
+    padding: clamp(8rem, 18vw, 14rem) var(--gutter) clamp(6rem, 14vw, 10rem);
+    text-align: center;
+  }
+  @media (min-width: 1000px) {
+    .roll {
+      margin-left: max(var(--gutter), calc(38vw - 22rem));
+    }
+  }
+  .presents {
+    font-size: var(--step--1);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dust);
+    margin-right: -0.3em;
+  }
+  .roll :global(.credits-wm) {
+    margin-top: 1.4rem;
+    font-size: clamp(2.2rem, 1rem + 5vw, 4.6rem);
+    letter-spacing: 0.02em;
   }
   .role {
-    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    margin-top: clamp(5rem, 12vw, 8rem);
     font-size: var(--step--1);
-    color: var(--dust);
-    letter-spacing: 0.04em;
-  }
-  .role:first-child {
-    margin-top: 0;
-  }
-  h2 {
-    margin-top: 0.75rem;
-    font-size: var(--step-4);
-    font-weight: 460;
-    letter-spacing: 0.045em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+    color: var(--dust);
+  }
+  .name {
+    margin-top: 0.7rem;
+    font-size: var(--step-3);
+    font-weight: 440;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .lens {
+    display: grid;
+    justify-items: center;
   }
   .about {
     display: grid;
     gap: 1.1rem;
-    margin-top: 2rem;
-    max-width: 34rem;
+    margin-top: 1.6rem;
+    max-width: 32rem;
     font-size: var(--step-1);
     line-height: 1.5;
     font-weight: 340;
   }
-  .links {
-    margin: 1rem 0 0;
-    padding: 0;
-    list-style: none;
+
+  .rows {
     display: grid;
-    gap: 0.45rem;
-    font-size: var(--step-1);
-    font-weight: 360;
+    gap: 0.9rem;
+    width: 100%;
+    margin: clamp(5rem, 12vw, 8rem) 0 0;
   }
+  .rows div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+  }
+  .rows dt {
+    text-align: right;
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+  .rows dd {
+    margin: 0;
+    text-align: left;
+    font-size: var(--step-1);
+    font-weight: 380;
+  }
+
   .email {
     margin-top: 1rem;
     font-size: var(--step-3);
@@ -103,12 +228,13 @@ const year = new Date().getFullYear();
     border-color: var(--tungsten);
   }
   .links {
-    margin-top: 2rem;
-    font-size: var(--step-0);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.5rem 1.75rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
   }
   .links a,
   .day a {
@@ -123,9 +249,104 @@ const year = new Date().getFullYear();
     color: var(--dust);
     font-size: 0.9375rem;
   }
+
+  /* After the credits */
+  .after {
+    position: relative;
+    background: var(--black);
+    display: grid;
+    justify-items: center;
+    padding: clamp(10rem, 30vh, 18rem) var(--gutter) 3rem;
+    text-align: center;
+  }
+  .after-label {
+    font-size: var(--step--1);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--tungsten);
+    margin-right: -0.3em;
+  }
+  .after-frame {
+    position: relative;
+    display: block;
+    width: min(100%, 52rem);
+    aspect-ratio: 16 / 9;
+    margin-top: 2.5rem;
+    overflow: hidden;
+    background: #050505;
+    clip-path: circle(0 at 50% 50%);
+    transition: clip-path 1.6s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+  .after.is-in .after-frame {
+    clip-path: circle(75% at 50% 50%);
+  }
+  .after-frame :global(.after-still) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
+  }
+  .after-frame:hover :global(.after-still) {
+    transform: scale(1.04);
+  }
+  .after h2 {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    font-size: var(--step-4);
+    font-weight: 440;
+  }
+  .after-kicker {
+    font-size: var(--step-0);
+    font-weight: 380;
+    color: var(--dust);
+  }
+  .after-line {
+    margin: clamp(4rem, 10vw, 6rem) 0 1.5rem;
+    font-size: var(--step-2);
+    font-weight: 360;
+  }
   .copy {
-    margin-top: clamp(5rem, 12vw, 8rem);
+    margin-top: clamp(6rem, 14vw, 9rem);
     color: var(--dust);
     font-size: var(--step--1);
   }
+
+  @media (max-width: 999px) {
+    .backdrop img {
+      width: 100%;
+      -webkit-mask-image: linear-gradient(to top, transparent, #000 60%);
+      mask-image: linear-gradient(to top, transparent, #000 60%);
+    }
+    .credits.is-lit .backdrop img {
+      opacity: 0.35;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .after-frame {
+      clip-path: none;
+    }
+  }
 </style>
+
+<script>
+  const credits = document.querySelector<HTMLElement>('[data-credits]');
+  const lens = document.querySelector<HTMLElement>('[data-lens]');
+  const after = document.querySelector<HTMLElement>('[data-after]');
+  if (credits && lens) {
+    // The photo lights up while "Behind the lens" passes through the middle of the screen.
+    new IntersectionObserver(([e]) => credits.classList.toggle('is-lit', e.isIntersecting), {
+      rootMargin: '-30% 0px -30% 0px',
+    }).observe(lens);
+  }
+  if (after) {
+    new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) after.classList.add('is-in');
+      },
+      { threshold: 0.35 },
+    ).observe(after);
+  }
+</script>
