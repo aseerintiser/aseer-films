@@ -1,0 +1,145 @@
+---
+---
+
+<div class="cursor" aria-hidden="true" data-cursor-el>
+  <span class="cursor-ring"></span>
+  <span class="cursor-label"></span>
+</div>
+
+<style is:global>
+  .cursor {
+    display: none;
+  }
+  html.has-cursor .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    display: grid;
+    place-items: center;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .cursor-ring {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--light);
+    mix-blend-mode: difference;
+    transition:
+      width 0.35s var(--ease-out),
+      height 0.35s var(--ease-out),
+      background-color 0.3s,
+      border-color 0.3s;
+  }
+  .cursor-ring::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    border-radius: 50%;
+    background: var(--tungsten);
+    transition: opacity 0.2s;
+  }
+  .cursor-label {
+    position: absolute;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--black);
+    opacity: 0;
+    transform: scale(0.6);
+    transition:
+      opacity 0.2s,
+      transform 0.35s var(--ease-out);
+    white-space: nowrap;
+  }
+  .cursor.is-link .cursor-ring {
+    width: 44px;
+    height: 44px;
+    border-color: var(--tungsten);
+  }
+  .cursor.is-label .cursor-ring {
+    width: 84px;
+    height: 84px;
+    background: var(--light);
+    border-color: var(--light);
+    mix-blend-mode: normal;
+  }
+  .cursor.is-label .cursor-ring::after {
+    opacity: 0;
+  }
+  .cursor.is-label .cursor-label {
+    opacity: 1;
+    transform: none;
+  }
+  .cursor.is-down .cursor-ring {
+    transform: scale(0.85);
+  }
+  .cursor.is-hidden {
+    opacity: 0;
+  }
+  html.has-cursor,
+  html.has-cursor a,
+  html.has-cursor button {
+    cursor: none;
+  }
+  html.has-cursor iframe {
+    cursor: auto;
+  }
+</style>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-cursor-el]');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (el && fine) {
+    const root = document.documentElement;
+    const label = el.querySelector<HTMLElement>('.cursor-label')!;
+    const labels: Record<string, string> = { play: 'Play', drag: 'Drag', open: 'Open' };
+    let x = -100;
+    let y = -100;
+    let cx = x;
+    let cy = y;
+    let started = false;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      x = e.clientX;
+      y = e.clientY;
+      if (!started) {
+        started = true;
+        cx = x;
+        cy = y;
+        root.classList.add('has-cursor');
+      }
+      const target = (e.target as HTMLElement).closest<HTMLElement>('[data-cursor], a, button, [role="button"]');
+      const kind = target?.dataset.cursor;
+      el.classList.toggle('is-label', Boolean(kind && labels[kind]));
+      el.classList.toggle('is-link', Boolean(target) && !(kind && labels[kind]));
+      if (kind && labels[kind]) label.textContent = labels[kind];
+    });
+    addEventListener('pointerdown', () => el.classList.add('is-down'));
+    addEventListener('pointerup', () => el.classList.remove('is-down'));
+    document.addEventListener('pointerleave', () => el.classList.add('is-hidden'));
+    document.addEventListener('pointerenter', () => el.classList.remove('is-hidden'));
+    // Over an embedded player the page loses the pointer, so hide ours.
+    addEventListener('blur', () => el.classList.add('is-hidden'));
+    addEventListener('focus', () => el.classList.remove('is-hidden'));
+
+    const loop = () => {
+      const k = reduce ? 1 : 0.22;
+      cx += (x - cx) * k;
+      cy += (y - cy) * k;
+      el.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+</script>

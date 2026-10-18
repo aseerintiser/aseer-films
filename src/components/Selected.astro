@@ -30,6 +30,7 @@ while (i < selected.length) {
                 class="frame"
                 href={`/films/${f.slug}/`}
                 data-open-film={f.slug}
+                data-cursor="play"
                 data-preview={f.platform === 'youtube' ? f.videoId : undefined}
                 data-start={Math.round(f.runtime * 0.3)}
                 aria-label={`Watch ${f.plainTitle}`}

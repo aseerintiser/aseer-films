@@ -1,0 +1,81 @@
+---
+/**
+ * The Bohrscope mark: the Bohr model of the atom, a nucleus with electrons
+ * on circular shells. It also reads as lens rings, a peephole and a film reel.
+ * It sits in place of the O in BOHR.
+ */
+interface Props {
+  class?: string;
+  spin?: boolean;
+  title?: string;
+}
+const { class: cls = '', spin = false, title } = Astro.props;
+const shells = [
+  { r: 44, dur: 7, start: 30 },
+  { r: 29, dur: 4.6, start: 200 },
+];
+---
+
+<svg
+  class:list={['orbit', cls, { spin }]}
+  viewBox="-50 -50 100 100"
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+  focusable="false"
+>
+  {
+    shells.map((s) => (
+      <g>
+        <circle class="ring" r={s.r} />
+        <g class="spinner" style={`--dur:${s.dur}s; --start:${s.start}deg`}>
+          <circle class="electron" cx={s.r} cy="0" r="6" />
+        </g>
+      </g>
+    ))
+  }
+  <circle class="nucleus" r="11" />
+</svg>
+
+<style is:global>
+  .orbit {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    overflow: visible;
+  }
+  .orbit .ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 8;
+  }
+  .orbit .nucleus,
+  .orbit .electron {
+    fill: var(--brass, currentColor);
+  }
+  .orbit .spinner {
+    transform: rotate(var(--start));
+    animation: electron var(--dur) linear infinite;
+  }
+  @keyframes electron {
+    from {
+      transform: rotate(var(--start));
+    }
+    to {
+      transform: rotate(calc(var(--start) + 360deg));
+    }
+  }
+  .orbit.spin {
+    animation: orbit-spin 14s linear infinite;
+  }
+  @keyframes orbit-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orbit .spinner {
+      animation: none;
+    }
+  }
+</style>

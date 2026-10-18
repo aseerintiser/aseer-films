@@ -19,7 +19,7 @@ const current = chronological[start];
   <div class="monitor-wrap">
     <div class="monitor">
       <div class="glow" aria-hidden="true"></div>
-      <button class="screen" type="button" data-monitor-play aria-label={`Watch ${current.plainTitle}`}>
+      <button class="screen" type="button" data-cursor="play" data-monitor-play aria-label={`Watch ${current.plainTitle}`}>
         {chronological.map((f, i) => <Poster film={f} class={i === start ? 'shot is-on' : 'shot'} alt="" deferred={i < start - 2} />)}
         <span class="play" aria-hidden="true">
           <svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z" fill="currentColor"></path></svg>
@@ -83,7 +83,7 @@ const current = chronological[start];
       </div>
     </div>
 
-    <div class="viewport" data-viewport>
+    <div class="viewport" data-viewport data-cursor="drag">
       <ol class="track" aria-label="Films, oldest to newest">
         {
           chronological.map((f, i) => {

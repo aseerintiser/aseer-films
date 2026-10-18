@@ -1,0 +1,56 @@
+---
+import Orbit from './Orbit.astro';
+interface Props {
+  class?: string;
+  as?: 'span' | 'h1' | 'p';
+  id?: string;
+}
+const { class: cls = '', as: Tag = 'span', id } = Astro.props;
+// The O in BOHR is the atom.
+const letters = ['B', 'atom', 'H', 'R', 'S', 'C', 'O', 'P', 'E'];
+---
+
+<Tag class:list={['wordmark', cls]} id={id}>
+  <span class="visually-hidden">Bohrscope</span>
+  {
+    letters.map((l, i) =>
+      l === 'atom' ? (
+        <span class="wm-o" style={`--i:${i}`} aria-hidden="true">
+          <Orbit />
+        </span>
+      ) : (
+        <span class="wm-l" style={`--i:${i}`} aria-hidden="true">
+          {l}
+        </span>
+      ),
+    )
+  }
+</Tag>
+
+<style is:global>
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.13em;
+    font-family: var(--font);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .wordmark .wm-l,
+  .wordmark .wm-o {
+    display: inline-block;
+  }
+  .wordmark .wm-o {
+    width: 0.8em;
+    height: 0.8em;
+    margin-inline: 0.02em;
+  }
+  .wordmark .wm-o .orbit {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>

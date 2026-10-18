@@ -9,7 +9,8 @@
   --screen: #0c0c0b; /* the faint grey of a lit screen before the film starts */
   --light: #ede8de; /* projector light on a white screen */
   --dust: #8f897e; /* secondary text, still 5.8:1 on black */
-  --tungsten: #e8a23a; /* playhead, focus, the one warm signal */
+  --tungsten: #e8a23a; /* bioscope brass: the brand colour, playhead and focus */
+  --brass: var(--tungsten);
   --safelight: #d2402f; /* darkroom red, used only for the live dot */
   --rule: rgb(237 232 222 / 0.14);
   --rule-strong: rgb(237 232 222 / 0.32);

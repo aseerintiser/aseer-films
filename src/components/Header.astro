@@ -1,17 +1,21 @@
 ---
-import { site } from '../lib/films';
+import Wordmark from './Wordmark.astro';
 const isHome = Astro.url.pathname === '/';
 const base = isHome ? '' : '/';
 ---
 
 <header class="bar">
-  <a class="mark" href="/" aria-label={`${site.name}, home`}>
-    <span class="dot" aria-hidden="true"></span>{site.name}
+  <a class="brand" href="/" aria-label="Bohrscope, home">
+    <Wordmark class="brand-wm" />
   </a>
   <nav aria-label="Main">
     <a href={`${base}#selected`}>Films</a>
-    <a href={`${base}#films`}>Timeline</a>
+    <a href={`${base}#films`}>Archive</a>
     <a href={`${base}#credits`}>About</a>
+    <button class="sound" type="button" data-sound-toggle aria-pressed="false">
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="sound-label">Sound</span>
+    </button>
   </nav>
 </header>
 
@@ -30,28 +34,22 @@ const base = isHome ? '' : '/';
     font-size: 0.9375rem;
     letter-spacing: 0.02em;
   }
-  .mark {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-weight: 500;
+  .brand {
     text-decoration: none;
-    white-space: nowrap;
+    color: var(--light);
   }
-  .dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--safelight);
-    box-shadow: 0 0 10px var(--safelight);
-    animation: rec 2s steps(1) infinite;
+  .brand :global(.brand-wm) {
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    gap: 0.16em;
   }
-  @keyframes rec {
-    50% { opacity: 0.25; }
+  .brand:hover :global(.orbit) {
+    animation: orbit-spin 2.4s linear infinite;
   }
   nav {
     display: flex;
-    gap: clamp(1rem, 3vw, 2.25rem);
+    align-items: center;
+    gap: clamp(0.9rem, 3vw, 2.25rem);
   }
   nav a {
     color: var(--dust);
@@ -61,13 +59,73 @@ const base = isHome ? '' : '/';
   nav a:hover {
     color: var(--light);
   }
-  @media (max-width: 420px) {
-    .mark {
-      font-size: 0.875rem;
+  .sound {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--dust);
+    padding: 0.4rem 0;
+  }
+  .sound:hover,
+  .sound[aria-pressed='true'] {
+    color: var(--light);
+  }
+  .bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.8rem;
+  }
+  .bars i {
+    width: 2px;
+    height: 30%;
+    background: currentColor;
+    border-radius: 1px;
+  }
+  .sound[aria-pressed='true'] .bars i {
+    animation: eq 0.9s ease-in-out infinite alternate;
+  }
+  .sound[aria-pressed='true'] .bars i:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .sound[aria-pressed='true'] .bars i:nth-child(3) {
+    animation-delay: -0.6s;
+  }
+  .sound[aria-pressed='true'] .bars i:nth-child(4) {
+    animation-delay: -0.15s;
+  }
+  @keyframes eq {
+    from { height: 25%; }
+    to { height: 100%; }
+  }
+  @media (max-width: 560px) {
+    .brand :global(.brand-wm) {
+      font-size: 0.9rem;
     }
     nav {
-      gap: 0.9rem;
+      gap: 0.85rem;
       font-size: 0.875rem;
+    }
+    .sound-label {
+      display: none;
     }
   }
 </style>
+
+<script>
+  import { isSoundOn, setSound, onSound, click } from '../scripts/sound';
+
+  const btn = document.querySelector<HTMLButtonElement>('[data-sound-toggle]');
+  if (btn) {
+    const render = (on: boolean) => {
+      btn.setAttribute('aria-pressed', String(on));
+      btn.setAttribute('aria-label', on ? 'Sound is on. Turn sound off' : 'Sound is off. Turn sound on');
+    };
+    render(isSoundOn());
+    onSound(render);
+    btn.addEventListener('click', () => {
+      setSound(!isSoundOn());
+      click(0.6);
+    });
+  }
+</script>
