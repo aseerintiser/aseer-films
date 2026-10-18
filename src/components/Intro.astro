@@ -218,6 +218,7 @@ import Orbit from './Orbit.astro';
         root.removeAttribute('data-intro');
         blocked.forEach((el) => (el.inert = false));
         peep.remove();
+        document.getElementById('main')?.focus({ preventScroll: true });
       }, 1400);
     };
 

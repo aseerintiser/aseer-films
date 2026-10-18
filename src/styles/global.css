@@ -115,6 +115,10 @@ p {
   outline-offset: 3px;
 }
 
+main:focus {
+  outline: none;
+}
+
 ::selection {
   background: var(--tungsten);
   color: var(--black);

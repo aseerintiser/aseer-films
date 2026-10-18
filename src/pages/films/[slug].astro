@@ -44,7 +44,7 @@ if (film.viewsLabel) facts.push([`On ${film.viewsWhere}`, film.viewsLabel, 'view
   <article class="film-page" style={`--accent:${film.accent}`}>
     <div class="ambient" aria-hidden="true" style={film.posterSmall ? `background-image:url(${film.posterSmall})` : undefined}></div>
     <div class="wrap">
-      <p class="kind"><a href="/#films">Every film</a><span aria-hidden="true">/</span>{film.kind}, {film.year}</p>
+      <p class="kind"><a href="/#films">Archive</a><span aria-hidden="true">/</span>{film.kind}, {film.year}</p>
 
       <div class="player" data-embed={film.embed} data-platform={film.platform}>
         <button class="start" type="button" aria-label={`Play ${film.plainTitle}`}>

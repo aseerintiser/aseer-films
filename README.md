@@ -1,8 +1,10 @@
-# Md Aseer Intiser · Films
+# Bohrscope · Films by Md Aseer Intiser
 
 > Every shot is a memory I don’t want to forget.
 
-The film portfolio of **Md Aseer Intiser**, a Bangladeshi filmmaker and UX designer based in Tampere, Finland. It brings together travel films, tributes and short stories made between 2016 and today, published on YouTube and Facebook.
+The film portfolio of **Md Aseer Intiser**, a Bangladeshi filmmaker and UX designer. It brings together travel films, tributes and short stories made between 2016 and today, published on YouTube and Facebook.
+
+**Bohrscope** is the name of his channel: the *bioscope*, the old street peep-show box, plus *Bohr*, his creative alter ego. The site is built as a bioscope you look into.
 
 **Live site:** [aseer-films.vercel.app](https://aseer-films.vercel.app)
 **Design portfolio:** [aseer.design](https://aseer.design)
@@ -10,17 +12,18 @@ The film portfolio of **Md Aseer Intiser**, a Bangladeshi filmmaker and UX desig
 
 ---
 
-## About the site
+## The ride
 
-The site is built to feel like sitting in an edit suite rather than scrolling a video gallery.
-
-| Section | What it does |
+| Scene | What happens |
 | --- | --- |
-| **Opening reel** | A film-leader countdown, then letterbox bars open on a silent reel that cuts between real films, with a live timecode. |
-| **Selected films** | The films I would show first, in large cinematic frames. Hovering over a frame plays a quiet, muted moment from the film. |
-| **Every film** | All films on a horizontal editing timeline, oldest to newest. Each clip is sized by the film’s runtime. Scrubbing the playhead updates a large preview monitor. Filters highlight travel films, shorts, tributes, the most watched films and early work. |
-| **Theater** | Films play full screen inside the site, with an ambient glow taken from the film’s own colours. Every film also has its own shareable page. |
-| **End credits** | About, collaborators and contact, set like the closing credits of a film. |
+| **The peephole** | A black screen with a small lens that follows the cursor. Through it, the films are already playing. Visitors enter with sound or in silence, and the lens irises open to full screen. |
+| **Title card** | The BOHRSCOPE wordmark builds letter by letter over a trailer that cuts between real films, with gate weave, light leaks and a flash on every cut. With sound on, each film's own audio fades into the next. |
+| **Four reels** | The story, told in Aseer's own words as subtitles: *For friends*, *Into the hills*, *Stories, trips and life*, *Choosing now*. Each reel is a 35mm strip that slides sideways as you scroll. The frame in the gate lights up and flickers, and red grease-pencil notes mark real milestones. |
+| **Now showing** | A projection room. A beam with drifting dust falls on a screen showing a live, muted preview of the selected films. |
+| **The archive** | Every film on an editing timeline. Clip length follows runtime, the playhead drives a preview monitor, and filters pick out travel films, shorts, tributes, the most watched films and early work. |
+| **Theater** | Films play inside the site. The theater opens as an iris from the frame you clicked. Every film also has its own shareable page. |
+| **End credits** | Credits roll over a photo of Aseer behind the camera, with real numbers: films, running time, views, years, places, languages and music. |
+| **After the credits** | The newest film, revealed through an iris, and an invitation to make the next one together. |
 
 ## Features
 
@@ -29,15 +32,17 @@ The site is built to feel like sitting in an edit suite rather than scrolling a 
 - **Shareable film pages.** Each film gets its own URL at `/films/<slug>/` with Open Graph previews and `VideoObject` structured data for search engines.
 - **Combined reach.** Films posted on both platforms show their combined view count, always rounded down so the number never overstates.
 - **Bangla and English.** Bangla titles and captions are tagged with the correct language and set in Noto Sans Bengali.
-- **Accessible by default.** Semantic HTML, a skip link, visible focus states, keyboard control of the timeline (arrow keys, Home and End), a native `<dialog>` for the player, a pause control for the moving reel, and full support for reduced motion.
-- **Light on data.** Static HTML, no framework runtime, self-hosted fonts, lazy-loaded images, and the background reel only runs on larger screens with a fine pointer. Phones and data-saver mode get slow poster crossfades instead.
+- **Sound is always a choice.** Off by default. The projector sounds are generated in the browser, so there are no audio files.
+- **Accessible by default.** Semantic HTML, a skip link, visible focus states, keyboard access to every film (focused frames scroll into the gate), a native `<dialog>` for the player, a pause control for the trailer, subtitles that double as readable text, and a calm version for reduced motion with no pinned scrolling.
+- **Light on data.** Static HTML, about 21 KB of JavaScript, no animation libraries, self-hosted fonts and lazy-loaded images. The trailer and previews only run on larger screens with a fine pointer. Phones and data-saver mode get slow poster crossfades instead.
 
 ## Tech stack
 
 - [Astro 7](https://astro.build): static site generation
 - Plain CSS with custom properties, and a small amount of TypeScript for interaction
 - [YouTube IFrame API](https://developers.google.com/youtube/iframe_api_reference) and the [Facebook embedded video player](https://developers.facebook.com/docs/plugins/embedded-video-player/)
-- [Jost](https://fontsource.org/fonts/jost), [IBM Plex Mono](https://fontsource.org/fonts/ibm-plex-mono) and [Noto Sans Bengali](https://fontsource.org/fonts/noto-sans-bengali), self-hosted through Fontsource
+- [Jost](https://fontsource.org/fonts/jost), [IBM Plex Mono](https://fontsource.org/fonts/ibm-plex-mono), [Noto Sans Bengali](https://fontsource.org/fonts/noto-sans-bengali) and [Caveat](https://fontsource.org/fonts/caveat), self-hosted through Fontsource
+- Web Audio for sound, the View Transitions API for page changes, and a small canvas for the projector dust
 - Hosted on [Vercel](https://vercel.com). Every push to `main` deploys automatically.
 
 No paid services, API keys or trackers are used.
@@ -47,25 +52,28 @@ No paid services, API keys or trackers are used.
 ```
 aseer-films/
 ├── public/
+│   ├── about/                Photo for the end credits
 │   ├── favicon.svg
-│   └── posters/              Poster stills for films without a YouTube thumbnail
+│   └── posters/              Stills for films without a YouTube thumbnail
 ├── src/
 │   ├── components/
-│   │   ├── Hero.astro        Opening reel and title card
-│   │   ├── Selected.astro    Selected films
-│   │   ├── Edit.astro        Timeline, monitor and filters
+│   │   ├── Intro.astro       The peephole
+│   │   ├── Hero.astro        Title card and trailer
+│   │   ├── Story.astro       The four reels
+│   │   ├── Projection.astro  Now showing
+│   │   ├── Edit.astro        The archive timeline
 │   │   ├── Theater.astro     Full-screen player
-│   │   ├── Credits.astro     About and contact
-│   │   ├── Header.astro
-│   │   └── Poster.astro      Poster image with a title-card fallback
-│   ├── data/
-│   │   └── films.json        All films, the hero reel and the selection
-│   ├── layouts/Base.astro    Page shell, metadata and intro countdown
-│   ├── lib/films.ts          Link parsing, formatting and derived data
+│   │   ├── Credits.astro     End credits and the scene after them
+│   │   ├── Wordmark.astro, Orbit.astro   The Bohrscope mark
+│   │   ├── Header.astro, Cursor.astro
+│   │   └── Poster.astro      Still, or a typographic Bohrscope poster
+│   ├── data/films.json       Films, chapters, the trailer and the selection
+│   ├── layouts/Base.astro    Page shell and metadata
+│   ├── lib/films.ts          Link parsing, chapters, notes and credits data
 │   ├── pages/
 │   │   ├── index.astro
 │   │   └── films/[slug].astro  One page per film
-│   ├── scripts/              Shared browser helpers
+│   ├── scripts/              Data, sound and shared helpers
 │   └── styles/global.css     Colour, type and motion tokens
 └── astro.config.mjs
 ```
@@ -102,8 +110,14 @@ aseer-films/
 | `views` | No | `{ "youtube": 1200, "facebook": 4000 }`. Shown once the total passes 1,000. |
 | `credits` | No | `[{ "role": "Music", "name": "Artist, \"Track\"" }]` |
 | `early` | No | `true` puts the film under Early work. |
+| `note` | No | A short handwritten note on the film strip. Facts only. |
 
 To feature a film, add its slug to `selected`. To include it in the opening reel, add it to `hero.reel` (YouTube films only).
+
+### Chapters and notes
+
+- A film lands in a reel by its year. Each chapter in `chapters` has an `until` year and the subtitle `lines` shown while it plays. New films after 2025 go into *Choosing now* automatically.
+- Grease-pencil notes appear for the newest film, for films watched 5,000+ times, and for any film with a `note` field, for example `"note": "first film on Bohrscope"`.
 
 ### Facebook films
 
