@@ -147,6 +147,21 @@ export const MOST_WATCHED = 3000;
 
 type RawChapter = { id: string; title: string; until: number; lines: string[] };
 
+/**
+ * Inside a reel, the strongest films come first: Aseer's favourites in his own order,
+ * then the rest by combined views, newest first when views are equal.
+ */
+function byStrength(a: Film, b: Film) {
+  const favA = data.selected.indexOf(a.slug);
+  const favB = data.selected.indexOf(b.slug);
+  if (favA !== -1 || favB !== -1) {
+    if (favA === -1) return 1;
+    if (favB === -1) return -1;
+    return favA - favB;
+  }
+  return b.views - a.views || b.date.localeCompare(a.date);
+}
+
 /** The story, told in chapters. Each film lands in a chapter by its year. */
 export const chapters = (() => {
   const list = (data as { chapters: RawChapter[] }).chapters;
@@ -156,7 +171,7 @@ export const chapters = (() => {
     const years = inChapter.map((f) => f.year);
     const range = years.length ? [Math.min(...years), Math.max(...years)] : [];
     from = c.until;
-    return { ...c, films: [...inChapter].reverse(), range };
+    return { ...c, films: [...inChapter].sort(byStrength), range };
   });
   // Newest first: the strongest work is what visitors meet first.
   return chapters.reverse();

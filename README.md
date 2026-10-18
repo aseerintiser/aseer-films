@@ -117,6 +117,7 @@ To feature a film, add its slug to `selected`. To include it in the opening reel
 ### Chapters and notes
 
 - A film lands in a reel by its year. Each chapter in `chapters` (listed oldest first in the file) has an `until` year and the subtitle `lines` shown while it plays. The site shows the reels newest first, and new films from 2025 on go into *Latest films* automatically.
+- Inside each reel, the strongest films come first: favourites from `selected` in their listed order, then the rest by combined views. Weaker films sink to the end on their own.
 - Grease-pencil notes appear for the newest film, for films watched 5,000+ times, and for any film with a `note` field, for example `"note": "first film on Bohrscope"`.
 
 ### Facebook films
