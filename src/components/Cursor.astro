@@ -93,6 +93,17 @@
   html.has-cursor iframe {
     cursor: auto;
   }
+  /* The player sits in the top layer, above the custom cursor, so it uses the normal one. */
+  html.has-cursor:has(dialog[open]) .cursor {
+    display: none;
+  }
+  html.has-cursor .theater {
+    cursor: auto;
+  }
+  html.has-cursor .theater a,
+  html.has-cursor .theater button {
+    cursor: pointer;
+  }
 </style>
 
 <script>
